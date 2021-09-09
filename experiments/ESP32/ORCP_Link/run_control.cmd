@@ -1,4 +1,4 @@
-start putty.exe COM6
+start putty.exe COM4
 pause
 python control.py
 pause

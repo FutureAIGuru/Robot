@@ -1,18 +1,14 @@
+import time
 from umqttsimple import MQTTClient
+import ubinascii
+import machine
 import micropython
 import network
-import machine
-import time
 import os
-
 import esp
 esp.osdebug(None)
 import gc
 gc.collect()
-
-def error(msg):
-    print('ERROR:', msg)
-    sleep(5)
 
 def acquire(name, force):
     f_val= ''
@@ -51,11 +47,12 @@ while pin.value() == 0:
     time.sleep(1)
 
 station = network.WLAN(network.STA_IF)
-if not station.isconnected():
-    print('Trying to connect to', ssid)
-    station.active(True)
-    station.connect(ssid, password)
-    while not station.isconnected():
-        pass
-    print('Connection successful')
-    print(station.ifconfig())
+
+station.active(True)
+station.connect(ssid, password)
+
+while station.isconnected() == False:
+  pass
+
+print('Connection successful')
+print(station.ifconfig())

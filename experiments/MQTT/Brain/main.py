@@ -8,12 +8,13 @@ import esp
 esp.osdebug(None)
 import gc
 gc.collect()
+import mqtt_config
 
 def sub_cb(topic, msg):
   print((topic, msg))
 
 def connect_and_subscribe():
-  global client_id, mqtt_server, topic_sub
+  global client_id, mqtt_server
   client = MQTTClient(client_id, mqtt_server)
   client.set_callback(sub_cb)
   client.connect()

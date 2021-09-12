@@ -14,8 +14,6 @@ password = 'S@ferThanB4!'
 mqtt_server = '192.168.2.155'
 
 client_id = 'Brain_20210905'   # ubinascii.hexlify('Robot_' + machine.unique_id())
-topic_sub = b'hello'
-topic_pub = b'notification'
 
 station = network.WLAN(network.STA_IF)
 

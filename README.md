@@ -11,6 +11,7 @@ To set up the various configurations of the board, a set of 8 tiny DIP switches 
 | USB<=>ESP8266 upd    | OFF  | OFF  | OFF  | OFF  | ON   | ON   | ON   |
 | USB<=>ESP8266 com    | OFF  | OFF  | OFF  | OFF  | ON   | ON   | OFF  |
 | All independent      | OFF  | OFF  | OFF  | OFF  | OFF  | OFF  | OFF  |
+| USB<=>2560<=>8266    | ON   | ON   | ON   | ON   | OFF  | OFF  | OFF  |
 
 In the following description, these configurations will be marked as binary numbers with an X at the end, since DIP switch number 8 is not used. 
 
@@ -48,6 +49,14 @@ The board of course comes without MicroPython pre-installed, but the procedure t
 - To check the installation, set the board config switches to 0000110X for ESP8266 communication mode, and start a terminal program like Putty to make a serial connection to the board (settings 115200 baud, 8 bits data, 1 stop bit no parity and no flow control).
 
 - If the board replies with the version information of MicroPython and the familiar `>>>` prompt, you have succesfully loaded MicroPython on the board.
+
+## MQTT configuration
+
+MQTT is a message broker protocol, which allows the clients to publish messages for topics, and subscribe to topics to get the relevant messages sent to them. The publishers and subscribers need not know about one another, they only need to know the server (a.k.a. broker) that relays all messages properly. For this project we use Mosquitto, one of the more well-known servers. It can be installed straight from the Eclipse website, but requires a few extra things to be installed.
+
+Fortunately, [Steve]([How to Install The Mosquitto MQTT Broker- Windows and Linux](http://www.steves-internet-guide.com/install-mosquitto-broker/)) has already figured this out, and has made a simple [package for version 1.5.8]([Mosquitto 1.5.8 Windows Files |](http://www.steves-internet-guide.com/download/mosquitto-1-5-8-windows-files/)) with everything needed collected in one folder. Simply unpack where needed, and start mosquitto.exe (with -v option for more info).
+
+For the configuration of the robot and brain MQTT clients, it is important to know which IP address the server runs on. This can be found by opening a command prompt and typing the command `ipconfig /all` on Windows, or `hostname -I` for Linux.
 
 ## Getting the Robot software
 
@@ -109,4 +118,4 @@ Of course the SSID and WiFi password need to be set, but the software will take 
 
 ![](C:\Users\Moorelife\Desktop\board.png)
 
-All that is required for the reset is to connect the two pins marked in red in the above image, and reset the board. As soon as you have set all configuration values, remove the connection and the software will attempt to connect again. 
+All that is required for the reset is to connect the two pins marked in red in the above image, and reset the board. As soon as you have set all configuration values, remove the connection and the software will attempt to connect again.

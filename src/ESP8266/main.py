@@ -43,6 +43,12 @@ def receive_and_process(uart):
         uart.write(rvcd)
     return rcvd
 
+def publish_config(uart):
+    msg = cfg.pack_config(cfg.q_drive, cfg.l_drive)
+    client.publish(cfg.q_config, msg)
+    print('PUBLISHED CONFIG:', cfg.q_config, cfg.unpack_config(msg))
+    last_msg = time.time()
+
 def prepare_and_publish(uart):
     global last_msg, msg_interval, counter
     if (time.time() - last_msg) > msg_interval:
@@ -60,6 +66,7 @@ try:
 except OSError as e:
     restart_and_reconnect()
 
+sent = publish_config(uart)
 while True:
     try:
         rcvd = receive_and_process(uart)

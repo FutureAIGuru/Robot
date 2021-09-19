@@ -1,5 +1,18 @@
 import struct as s
 
+# topic: 'Config'
+# - config_id 
+# - data length
+# - timeout
+q_config = b'Config' # topic string
+s_config = '20sii'   # pack string   
+
+def pack_config(config_id, data_len, timeout):
+    return s.pack(s_config, config_id, data_len, timeout)
+
+def unpack_drive(pkg):
+    return s.unpack(s_config, pkg)
+
 # topic: 'Drive'
 # - Move = ['Forward', 'Backward', 'ShiftLeft', 'ShiftRight']
 # - Turn = ['SpinLeft', 'SpinRight', 'TurnLeft', 'TurnRight']

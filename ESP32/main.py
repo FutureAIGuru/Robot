@@ -6,7 +6,10 @@ from ota_update.main.ota_updater import OTAUpdater
 @staticmethod
 def _otaUpdate():
     from .ota_updater import OTAUpdater
-    otaUpdater = OTAUpdater('https://github.com/FutureAIGuru/Robot', github_src_dir='ESP32', main_dir='app', secrets_file="config.json")
+    otaUpdater = OTAUpdater('https://github.com/FutureAIGuru/Robot', 
+                            github_src_dir='ESP32', 
+                            main_dir='app', 
+                            secrets_file="config.json")
     otaUpdater.install_update_if_available()
     del(otaUpdater)
 
@@ -22,6 +25,7 @@ def start(config_data):
     global s
     utime.sleep_ms(10000)
     from main.RobotBrain import RobotBrain
+    print("experimental update")
     s = RobotBrain(config_data)
 
 

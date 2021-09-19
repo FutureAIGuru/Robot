@@ -13,7 +13,7 @@ def connectToWifiAndUpdate():
         while not sta_if.isconnected():
             pass
     print('network config:', sta_if.ifconfig())
-    otaUpdater = OTAUpdater('https://github.com/FutureAIGuru/Robot', main_dir='ESP32', secrets_file="secrets.py")
+    otaUpdater = OTAUpdater('https://github.com/FutureAIGuru/Robot', main_dir='src', secrets_file="secrets.py")
     hasUpdated = otaUpdater.install_update_if_available()
     if hasUpdated:
         machine.reset()

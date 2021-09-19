@@ -7,14 +7,7 @@ class OTAUpdater:
     optimized for low power usage.
     """
 
-    def __init__(self, 
-                 github_repo, 
-                 github_src_dir='', 
-                 module='', 
-                 main_dir='main', 
-                 new_version_dir='next', 
-                 secrets_file=None, 
-                 headers={}):
+    def __init__(self, github_repo, github_src_dir='', module='', main_dir='main', new_version_dir='next', secrets_file=None, headers={}):
         self.http_client = HttpClient(headers=headers)
         self.github_repo = github_repo.rstrip('/').replace('https://github.com/', '')
         self.github_src_dir = '' if len(github_src_dir) < 1 else github_src_dir.rstrip('/') + '/'

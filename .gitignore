@@ -2,3 +2,4 @@ pymakr.conf
 config.json
 secrets.py
 *.cfg
+copy2localwebserver.cmd

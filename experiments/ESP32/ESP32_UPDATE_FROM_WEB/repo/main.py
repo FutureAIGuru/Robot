@@ -1,5 +1,3 @@
-from download import print_signature
-from new import sign
 import machine
 import time
 import os
@@ -7,7 +5,6 @@ import tk
 
 lst  = 'load_files.txt'
 vrs  = 'version.txt'
-
 
 def upd(src):
     tk.del_file(src)
@@ -31,7 +28,6 @@ def check_for_updates():
     machine.reset()
 
 check_for_updates()
-print_signature()
-sign()
-with open(vrs, 'r') as v:
-    print('Version:', v.read())
+print('version:', tk.rd_file(vrs))
+
+# Main program after this...

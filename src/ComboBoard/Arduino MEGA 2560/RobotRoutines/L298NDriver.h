@@ -9,15 +9,16 @@
 	#include "WProgram.h"
 #endif
 
-enum Direction { Left, Right };
+enum Direction { Right = 9, Left = 10 };
 
 class L298NDriver
 {
 public:
-    L298NDriver(int left_pin, int right_pin, int speed_pin);
+    L298NDriver(void);
     ~L298NDriver(void);
-    void configurePins(void);
+    void configurePins(int left_pin, int right_pin, int speed_pin);
     void setDirection(Direction direction);
+    Direction getDirection(void);
     void setSpeed(int speed, int ramping = 1);
     int getSpeed(void);
     void emergencyStop(void);
@@ -34,4 +35,3 @@ private:
 
 
 #endif
-

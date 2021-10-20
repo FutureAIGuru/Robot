@@ -116,6 +116,6 @@ Of course the SSID and WiFi password need to be set, but the software will take 
 
 - If connectionns are not established, the reset of the configuration can be forced by connecting two pins on the board and resetting it. 
 
-![](C:\Users\Moorelife\Desktop\board.png)
+![](C:\Users\André Slabber\Desktop\board.png)
 
 All that is required for the reset is to connect the two pins marked in red in the above image, and reset the board. As soon as you have set all configuration values, remove the connection and the software will attempt to connect again.

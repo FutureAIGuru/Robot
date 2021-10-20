@@ -4,12 +4,9 @@
 
 #include "L298NDriver.h"
 
-L298NDriver::L298NDriver(int left_pin, int right_pin, int speed_pin)
+L298NDriver::L298NDriver(void)
 {
-    _left_pin = left_pin;
-    _right_pin = right_pin;
-    _speed_pin = speed_pin;
-    _set_direction = 0;
+    _set_direction = Left;
     _set_speed = 0;
 }
 
@@ -17,8 +14,11 @@ L298NDriver::~L298NDriver()
 {
 }
 
-void L298NDriver::configurePins(void)
+void L298NDriver::configurePins(int left_pin, int right_pin, int speed_pin)
 {
+    _left_pin = left_pin;
+    _right_pin = right_pin;
+    _speed_pin = speed_pin;
     pinMode(_right_pin, OUTPUT);
     pinMode(_left_pin, OUTPUT);
     pinMode(_speed_pin, OUTPUT);
@@ -34,9 +34,9 @@ void L298NDriver::setDirection(Direction direction)
     _command_motor();
 }
 
-Direction L298NDriver::setDirection()
+Direction L298NDriver::getDirection()
 {
-    return _set_direction'
+    return _set_direction;
 }
 
 void L298NDriver::setSpeed(int speed, int ramp)
@@ -96,4 +96,3 @@ void L298NDriver::_command_motor(void)
         digitalWrite(_left_pin, HIGH);
     }
 }
-

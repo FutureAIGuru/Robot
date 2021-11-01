@@ -1,21 +1,22 @@
-link_identifier = '20211011121314'
+link_id = '20211011121314'
 
 # topic strings
-startup   = b'Startup'
-acquire   = b'Acquire'
-hwconfig  = b'HWConfig'
-swconfig  = b'SWConfig'
-sensor    = b'Sensor'
-actuator  = b'Actuator'
+t_s   = b'Startup'
+t_a   = b'Acquire'
+t_hc  = b'HWConfig'
+t_sc  = b'SWConfig'
+t_sns = b'Sensor'
+t_act = b'Actuator'
 
 # config parts
-motordrive     = 'MotorDrive'
-wheelsensor    = 'WheelSensor'
-inertialsensor = 'InertialSensor'
-endconfig      = 'EndConfig'
+c_ir  = 'InfraRed'
+c_md  = 'MotorDrive'
+c_ws  = 'WheelSensor'
+c_is  = 'InertialSensor'
+c_end = 'EndConfig'
     
 # operating modes
-unconnected = 'unconnected'
-acquiring   = 'acquiring'
-configuring = 'configuring'
-operating   = 'operating'
+m_u  = 'unconnected'
+m_a  = 'acquiring'
+m_c  = 'configuring'
+m_o  = 'operating'

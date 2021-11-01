@@ -34,8 +34,6 @@ def acquire(name):
 # set up the wifi client connection
 ssid = acquire('SSID')
 password = acquire('password')
-mqtt_server = acquire('mqtt_server')
-client_id = acquire('client_id')
 
 last_message = 0
 message_interval = 5

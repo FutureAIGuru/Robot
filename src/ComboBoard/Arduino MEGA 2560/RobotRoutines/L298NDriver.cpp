@@ -19,12 +19,20 @@ void L298NDriver::configurePins(int left_pin, int right_pin, int speed_pin)
     _left_pin = left_pin;
     _right_pin = right_pin;
     _speed_pin = speed_pin;
+    _min_speed = 0;
+    _max_speed = 255;
     pinMode(_right_pin, OUTPUT);
     pinMode(_left_pin, OUTPUT);
     pinMode(_speed_pin, OUTPUT);
     digitalWrite(_right_pin, LOW);
     digitalWrite(_left_pin, LOW);
     analogWrite(_speed_pin, _set_speed);
+}
+
+void L298NDriver::setSpeedRange(int min_speed, int max_speed)
+{
+    _min_speed = min_speed;
+    _max_speed = max_speed;
 }
 
 void L298NDriver::setDirection(Direction direction)
@@ -71,6 +79,15 @@ void L298NDriver::setSpeed(int speed, int ramp)
     }
 }
 
+int L298NDriver::calculateSpeed(void)
+{
+    if (_set_speed == 0)
+    {
+        return 0;
+    }
+    return _min_speed + (float)(_max_speed - _min_speed)/((float)(255))*_set_speed;
+}
+
 int L298NDriver::getSpeed(void)
 {
     return _set_speed;
@@ -84,7 +101,8 @@ void L298NDriver::emergencyStop(void)
 
 void L298NDriver::_command_motor(void)
 {
-    analogWrite(_speed_pin, int(_set_speed));
+    int outspeed = calculateSpeed();
+    analogWrite(_speed_pin, int(outspeed));
     if (_set_direction == Left)
     {
         digitalWrite(_left_pin, LOW);

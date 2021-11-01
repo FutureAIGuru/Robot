@@ -1,4 +1,5 @@
 from umqttsimple import MQTTClient
+from machine import UART
 import topics
 import ubinascii
 import machine
@@ -9,7 +10,7 @@ import tk
 lst  = 'load_files.txt'
 vrs  = 'version.txt'
 
-status = topics.unconnected
+mode = topics.m_u
 
 def upd(src):
     tk.del_file(src)
@@ -32,33 +33,31 @@ def check_for_updates():
             upd(line)
     machine.reset()
 
-def handle_acquire(message):
-    global status
-    status = topics.configuring
-    print('Brain sent acquire message')
+def handle_acquire(msg):
+    global mode
+    mode = topics.m_c
+    print('Brain sent acquire')
 
-def handle_sw_config(message):
-    global status
-    if msg == topics.endconfig:
-        status = topics.operating
-    print('Brain sent swconfig message')
+def handle_sw_config(msg):
+    global mode
+    if msg == topics.c_end:
+        mode = topics.m_o
+    print('Brain sent swconfig')
                 
-def handle_actuator_data(message):
-    global status
-    print('Brain sent actuator message')
+def handle_actuator_data(msg):
+    global mode
+    print('Brain sent actuator')
+    mode = topics.m_c
                 
 def sub_cb(topic, msg):
-    global status
-    print((topic, msg))
-    if topic == topics.acquire:
-        print('Robot received ' + str(topics.acquire) + ' message.')
-        status = topics.acquiring
+    global mode
     if msg is not None:
-        if str(topic) == str(topics.acquire) and status == topics.unconnected:
+        print('msg found:', mode, topic, msg)
+        if str(topic) == str(topics.t_a):
             handle_acquire(msg)
-        if str(topic) == str(topics.swconfig) and status == topics.configuring:
+        if str(topic) == str(topics.t_sc):
             handle_sw_config(msg)
-        if str(topic) == str(topics.actuator) and status == topics.operating:
+        if str(topic) == str(topics.t_act):
             handle_actuator_data(msg)
 
 def connect_and_subscribe():
@@ -66,10 +65,10 @@ def connect_and_subscribe():
     client = MQTTClient(client_id, mqtt_server)
     client.set_callback(sub_cb)
     client.connect()
-    client.subscribe(topics.acquire)
-    client.subscribe(topics.swconfig)
-    client.subscribe(topics.actuator)
-    print('Connected to %s MQTT broker, subscribed to %s topic' % (mqtt_server, topics.swconfig))
+    client.subscribe(topics.t_a)
+    client.subscribe(topics.t_sc)
+    client.subscribe(topics.t_act)
+    print('Connected to MQTT broker', mqtt_server)
     return client
 
 def restart_and_reconnect():
@@ -78,51 +77,69 @@ def restart_and_reconnect():
     machine.reset()
 
 def publish_configuration():
-    msg = topics.motordrive
+    msg = topics.c_ir
     print(': ', msg)
-    client.publish(topics.hwconfig, msg)    
-    msg = topics.wheelsensor
+    client.publish(topics.t_hc, msg)    
+    msg = topics.c_md
     print(': ', msg)
-    client.publish(topics.hwconfig, msg)    
-    msg = topics.inertialsensor
+    client.publish(topics.t_hc, msg)    
+    msg = topics.c_ws
     print(': ', msg)
-    client.publish(topics.hwconfig, msg)    
-    msg = topics.endconfig
+    client.publish(topics.t_hc, msg)    
+    msg = topics.c_is
     print(': ', msg)
-    client.publish(topics.hwconfig, msg)    
+    client.publish(topics.t_hc, msg)    
+    msg = topics.c_end
+    print(': ', msg)
+    client.publish(topics.t_hc, msg)    
 
 def send_sensor_data():
-    msg = topics.wheelsensor
-    print(': ', msg)
-    client.publish(topics.sensor, msg)    
-    msg = topics.inertialsensor
-    print(': ', msg)
-    client.publish(topics.sensor, msg)    
+    if UART.any(uart):
+        msg = uart.read()
+        print('sending sensor data', msg)
+        parts = msg.split()
+        if parts[0] == 'IrCmd':
+            print('sending IR data', msg)
+            client.publish(topics.c_ir, msg)    
+    # msg = topics.wheelsensor
+    # print(': ', msg)
+    # client.publish(topics.sensor, msg)    
+    # msg = topics.inertialsensor
+    # print(': ', msg)
+    # client.publish(topics.sensor, msg)    
+    pass
 
 check_for_updates()
 print('version:', tk.rd_file(vrs, '9.9.9'))
 
+uart = UART(1, 115200)
+uart.init(115200, bits=8, parity=None, stop=1)
+
 # Main program after this...
+
 try:
     client = connect_and_subscribe()
 except OSError as e:
     restart_and_reconnect()
 
 start_time = time.time()
-client.publish(topics.startup, topics.link_identifier)
-print('Sending topics.startup', topics.link_identifier)
 
+mode = topics.m_u
 while True:
     try:
         client.check_msg()
-        if status == topics.acquiring:
+        if mode == topics.m_u:
+            client.publish(topics.t_s, topics.link_id)
+            mode = topics.m_a
+            print('Startup sent')
+        if mode == topics.m_c:
             publish_configuration()
-            status = topics.operating
+            mode = topics.m_o
+        if mode == topics.m_o:
+            send_sensor_data()
         if time.time() - start_time > 30:
             restart_and_reconnect()
         else:
             start_time = time.time()
-        if status == topics.operating:
-            send_sensor_data()
     except OSError as e:
         restart_and_reconnect()

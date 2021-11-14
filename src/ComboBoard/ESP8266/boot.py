@@ -20,9 +20,9 @@ def acquire(name):
             print(name, 'not configured yet')
     reply = 'no'
     while acq == '':
-        prompt = 'Enter acq for ' + name + ':'
+        prompt = 'Enter value for ' + name + ':'
         acq = input(prompt)
-        prompt = 'Is acq ' + acq + ' correct? (Y/n):'
+        prompt = 'Is value ' + acq + ' correct? (Y/n):'
         reply = input(prompt)
         if reply != 'y':
             acq = ''
@@ -50,7 +50,7 @@ retries = 10
 while station.isconnected() == False and retries > 0:
     retries -= 1
     time.sleep(10)
-    pass
+
 if retries == 0 or station.isconnected() == False:
     # os.remove('SSID.cfg')
     # os.remove('password.cfg')

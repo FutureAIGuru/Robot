@@ -1,74 +1,96 @@
-import paho.mqtt.client as mqtt 
-import robot_mqtt_topics as mq
 from random import randrange, uniform
+import paho.mqtt.client as mqtt 
 import time
 
+import tp
+from sens import Sensor
+from actr import Actuator
 mqttBroker ="192.168.2.155" 
 
-link_status = mq.unconnected
+mode = tp.m_u
+sens_list = []
+actr_list = []
 
 def handle_startup(message):
     print('message:', str(message.payload.decode("utf-8")))
-    print('identifier:', mq.link_identifier)
-    if str(message.payload.decode("utf-8")) == mq.link_identifier:
+    print('identifier:', tp.link_id)
+    if str(message.payload.decode("utf-8")) == tp.link_id:
         print('correct robot found')
         print('Brain went into ACQUIRE mode', str(message.payload.decode("utf-8")))
-        client.publish(mq.acquire, str(time.time()))
-        link_status = mq.configuring
+        client.publish(tp.t_a, str(time.time()))
+        mode = tp.m_c
         return
     print('Brain ignored incoming Startup message')
 
 def handle_hw_config(message):
-    link_status = mq.configuring
+    global mode, sens_list, actr_list
     msg = str(message.payload.decode("utf-8"))
-    print('Brain in CONFIGURE mode', msg)
-    client.publish(mq.swconfig, msg)
-    if msg == mq.endconfig:
-        link_status = mq.operating
+    print('sw_config received', msg)
+        
+    if msg in tp.sens_list:
+        sens_list.append(Sensor(msg))
+        client.subscribe(msg)
+        client.publish(tp.t_sc, msg)    
+        return
+    if msg in tp.actr_list:
+        actr_list.append(Actuator(msg))
+        client.publish(tp.t_sc, msg)    
+        return
+    if msg == tp.c_end:
+        print('switch to operating mode')
+        client.publish(tp.t_sc, msg)    
+        mode = tp.m_o
+        return
                 
 def handle_sensor_data(message):
     msg = str(message.payload.decode("utf-8"))
     parts = msg.split()
     print('Brain in OPERATING mode', msg)
-    if parts[0] == 'IrCmd':
-        print('Infrared command received:' , msg)    
                 
 def on_message(client, userdata, message):
-    global link_status
+    global mode
     if message is not None:
-        if str(message.topic) == mq.startup:
+        if str(message.topic) == tp.t_s:
             print('handle_startup()')
             handle_startup(message)
-        if str(message.topic) == mq.hwconfig:
+            return
+        if str(message.topic) == tp.t_hc:
             print('handle_hw_config()')
             handle_hw_config(message)
-        if str(message.topic) == mq.sensor:
+            return
+        if str(message.topic) == tp.t_sns:
             print('handle_sensor_data()')
             handle_sensor_data(message)
+            return
 
+def send_actuators():
+    global client, actr_list
+    for actr in actr_list:
+        client.publish(actr.label, 'payload')    
+        
 # Main program after this...
 
-client = mqtt.Client("Brain_Publisher")
+client = mqtt.Client("BrainSimII")
 client.connect(mqttBroker) 
 client.loop_start()
-client.subscribe(mq.startup)
-client.subscribe(mq.hwconfig)
-client.subscribe(mq.sensor)
+client.subscribe(tp.t_s)
+client.subscribe(tp.t_hc) 
+client.subscribe(tp.t_sns)
 client.on_message=on_message 
 
-link_status = mq.unconnected
-while link_status == mq.unconnected:
-    time.sleep(1)
-link_status = mq.acquiring
-while link_status == mq.acquiring:
-    time.sleep(1)
-link_status = mq.configuring
-while link_status == mq.configuring:
-    time.sleep(1)
-link_status = mq.operating
-while link_status == mq.operating:
-    time.sleep(1)
+# robot leads the conversation until 
+# operating mode is established...
+mode = tp.m_u
+while mode == tp.m_u:
+    time.sleep(0.1)
+while mode == tp.m_a:
+    time.sleep(0.1)
+while mode == tp.m_c:
+    time.sleep(0.1)
     
-# time.sleep(30)
-# client.loop_stop()
-    
+# when in operating mode, we send the 
+# actuators from this loop...
+print('started in mode:', mode)
+while mode == tp.m_o:
+    send_actuators()
+    time.sleep(1)

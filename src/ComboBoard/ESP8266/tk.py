@@ -2,7 +2,7 @@ import urequests as req
 import time
 import os
 
-base = 'http://André Slabber.nl/repo/'
+base = 'http://moorelife.nl/repo/'
 
 def do_req(extra, dflt=''):
     txt = dflt

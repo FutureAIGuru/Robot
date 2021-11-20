@@ -14,13 +14,13 @@ actr_list = []
 def handle_startup(message):
     print('message:', str(message.payload.decode("utf-8")))
     print('identifier:', tp.link_id)
-    if str(message.payload.decode("utf-8")) == tp.link_id:
-        print('correct robot found')
-        print('Brain went into ACQUIRE mode', str(message.payload.decode("utf-8")))
-        client.publish(tp.t_a, str(time.time()))
-        mode = tp.m_c
+    if str(message.payload.decode("utf-8")) != tp.link_id:
+        print('Brain ignored incoming Startup message')
         return
-    print('Brain ignored incoming Startup message')
+    print('correct robot found')
+    client.publish(tp.t_a, str(time.time()))
+    mode = tp.m_c
+    return
 
 def handle_hw_config(message):
     global mode, sens_list, actr_list
@@ -28,13 +28,13 @@ def handle_hw_config(message):
     print('sw_config received', msg)
         
     if msg in tp.sens_list:
-        sens_list.append(Sensor(msg))
         client.subscribe(msg)
         client.publish(tp.t_sc, msg)    
+        sens_list.append(Sensor(msg))
         return
     if msg in tp.actr_list:
-        actr_list.append(Actuator(msg))
         client.publish(tp.t_sc, msg)    
+        actr_list.append(Actuator(msg))
         return
     if msg == tp.c_end:
         print('switch to operating mode')
@@ -43,8 +43,12 @@ def handle_hw_config(message):
         return
                 
 def handle_sensor_data(message):
+    global sens_list
     msg = str(message.payload.decode("utf-8"))
     parts = msg.split()
+    for sens in sens_list:
+        if parts[0] == sens.label:
+            sens.recv_payload(parts)
     print('Brain in OPERATING mode', msg)
                 
 def on_message(client, userdata, message):
@@ -66,7 +70,7 @@ def on_message(client, userdata, message):
 def send_actuators():
     global client, actr_list
     for actr in actr_list:
-        client.publish(actr.label, 'payload')    
+        client.publish(actr.label, actr.send_payload())
         
 # Main program after this...
 

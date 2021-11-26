@@ -34,21 +34,24 @@ public:
 	
 protected:
 	bool enabled = false;			//'e' enabled / attached
-	int pinNumber = -1;			//'p'
+	long pinNumber = -1;			//'p'
 	int minValue = 0;		//'m' don't go below this value
 	int maxValue = 180;		//'M' don't go above this value
 
 public:
 	virtual void updateActuatorValue(int elapsedMS);
-	virtual bool setValue(char code, int value);
+	virtual bool setValue(char code, long value);
 	String ToString();
+	int Pin0() { return pinNumber % 100; }
+	int Pin1() { return (pinNumber/100) % 100; }
+	int Pin2() { return (pinNumber / 10000) % 100; }
 };
 
 class ServoActuator : public Actuator {
 public:
 	bool moving = false;
 	virtual void updateActuatorValue(int elapsedMS);
-	bool setValue(char code, int value);
+	bool setValue(char code, long value);
 };
 
 class MotorActuator : public Actuator {
@@ -62,7 +65,9 @@ public:
 	int rateSensorPin = -1;
 
 	void updateActuatorValue(int elapsedMS);
-	bool setValue(char code, int value);
+	bool setValue(char code, long value);
+	void setMotorSpeed(int value);
+	void enableMotor(bool enable);
 };
 
 extern Actuator * actuators[MAX_ACTUATORS];

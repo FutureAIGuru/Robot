@@ -245,3 +245,4 @@ void sensorInput2() {
 void sensorInput3() {
 	processRotarySensorInterrupt(3);
 }
+

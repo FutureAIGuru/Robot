@@ -20,9 +20,9 @@ void setup() {
 	setupSensors();
 
 	//setup heartbeat
-	pinMode(13, OUTPUT);
-	digitalWrite(13, HIGH);
-	ledToggleTime = millis();
+	//pinMode(13, OUTPUT);
+	//digitalWrite(13, HIGH);
+	//ledToggleTime = millis();
 
 	Serial.println("Initialization Complete");
 
@@ -38,13 +38,13 @@ void loop() {
 
 	handleSensors();
 
-	if (millis() > ledToggleTime + LED_TOGGLE_DELAY) {
-		ledToggleTime = millis();
-		if (ledIsOn)
-			digitalWrite(13, LOW);
-		else
-			digitalWrite(13, HIGH);
-		ledIsOn = !ledIsOn;
-	}
+	//if (millis() > ledToggleTime + LED_TOGGLE_DELAY) {
+	//	ledToggleTime = millis();
+	//	if (ledIsOn)
+	//		digitalWrite(13, LOW);
+	//	else
+	//		digitalWrite(13, HIGH);
+	//	ledIsOn = !ledIsOn;
+	//}
 }
 

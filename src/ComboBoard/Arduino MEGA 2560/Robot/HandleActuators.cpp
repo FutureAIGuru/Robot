@@ -13,14 +13,17 @@ const char* actuatorTypeName[] = { "motor", "servo" };
 
 
 void setupActuators() {
+	//initialize the array
 	for (int i = 0; i < MAX_ACTUATORS; i++) {
 		actuators[i] = new Actuator();
 		actuators[i]->index = i;
 	}
+
+
 }
 
 void handleActuators() {
-	//update servo positions
+	//update actuator values 
 	unsigned long currentTime = millis();
 	for (int i = 0; i < MAX_ACTUATORS; i++)
 	{
@@ -35,7 +38,7 @@ void handleActuators() {
 void Actuator::updateActuatorValue(int elapsedMS) {
 }
 
-bool Actuator::setValue(char code, int value) {
+bool Actuator::setValue(char code, long value) {
 	bool handled = false;
 	switch (code) {
 	case 'm':
@@ -54,6 +57,7 @@ bool Actuator::setValue(char code, int value) {
 		pinNumber = value;
 		handled = true;
 		break;
+
 	case 't': //time to reach target
 		targetTime = value;
 		handled = true;
@@ -105,10 +109,10 @@ void ServoActuator::updateActuatorValue(int elapsedMS) {
 		currentPosition += (float)elapsedMS * rate;
 		lastMoved = millis();
 		s.write((int)currentPosition);
-		Serial.print(pinNumber); Serial.print(":"); Serial.println(currentPosition);
+		//Serial.print(pinNumber); Serial.print(":"); Serial.println(currentPosition);
 	}
 };
-bool ServoActuator::setValue(char code, int value) {
+bool ServoActuator::setValue(char code, long value) {
 	bool handled = Actuator::setValue(code, value);
 	switch (code)
 	{
@@ -147,19 +151,99 @@ bool ServoActuator::setValue(char code, int value) {
 Special Stuff for Motors
 *******************************************************/
 
+/*
+* For the L298N controller which requires 3 pins per motor:
+* the Pin Number is express in the config string as pxxyyzz 
+* where:
+* xx is the PWM pin (a leading 0 is optional)
+* yy is the first enable pin (a leading 0 is required for a 1-digit pin#)
+* zz is the second enable pin (a leading 0 is required for a 1-digit pin#)
+* 
+* So if the pwm pin is 3, and the enable pings are 54 & 55 this wout be p035455
+* Note that defining the same motor as p035554 will make it run in the opposite direction
+*/
+
+void MotorActuator::enableMotor(bool enable) {
+	if (Pin1() == 0) {//there is only a single pin number, this must be a sabertooth controller
+		if (!enable) {
+			if (s.attached()) {
+				s.detach();
+			}
+			//Serial.print(" disablingMotor: "), Serial.println(index);
+		}
+		else {
+			if (!s.attached()) {
+				s.attach(pinNumber, 1000, 2100);
+				//Serial.print(" Attaching Motor: "), Serial.println(index);
+			}
+		}
+	}
+	else {
+		if (enable && !enabled) {
+			pinMode(Pin0(), OUTPUT);
+			pinMode(Pin1(), OUTPUT);
+			pinMode(Pin2(), OUTPUT);
+		}
+		else if (!enable && enabled) {
+			analogWrite(Pin2(), 0);
+			pinMode(Pin2(), INPUT);
+			digitalWrite(Pin1(), LOW);
+			pinMode(Pin1(), INPUT);
+			digitalWrite(Pin0(), LOW);
+			pinMode(Pin0(), INPUT);
+		}
+	}
+}
+void MotorActuator::setMotorSpeed(int speed)
+{
+//	Serial.print("Index: "); Serial.print(index); Serial.print(" PinNumber:"); Serial.print(pinNumber); Serial.print(" Pin0:"); Serial.print(Pin0()); Serial.print(" Pin1:"); Serial.print(Pin1()); Serial.print(" Pin2:"); Serial.println(Pin2());
+	if (Pin1() == 0) {//there is only a single pin number, this must be a sabertooth controller
+		s.write(speed);
+	}
+	else {
+		//figure out the direction so we can disable/enable the correct pins
+		int dir = 0; //disable=0, fwd=1 rev=-1
+		if (speed > 95) dir = 1;
+		if (speed < 85) dir = -1;
+
+		//convert speed from range [0,180] to [-255,255]
+		long absSpeed = abs(speed - 90);
+		absSpeed *= 255;
+		absSpeed /= 90;
+		analogWrite(Pin2(), absSpeed);
+//		Serial.print(" Setting Motor Speed: "), Serial.print(speed);
+//		Serial.print(" Abs Speed: "), Serial.print(absSpeed);
+//		Serial.print(" dir: "), Serial.println(dir);
+
+		//set the digital pins to control the direction
+		if (dir == 0) {
+			digitalWrite(Pin0(), LOW);
+			digitalWrite(Pin1(), LOW);
+		}
+		else if (dir == 1) {
+			digitalWrite(Pin0(), HIGH);
+			digitalWrite(Pin1(), LOW);
+		}
+		else if (dir == -1) {
+			digitalWrite(Pin0(), LOW);
+			digitalWrite(Pin1(), HIGH);
+		}
+	}
+}
+
 void MotorActuator::updateActuatorValue(int elapsedMS) {
 	lastMoved = millis();
-	switch (motorControlMode)
-	{
+	switch (motorControlMode) {
 	case MotorActuator::raw: //nothing here, it's all handled in the SetValue() method
 		break;
+
 	case MotorActuator::rate:
 		//******************************************///
-		//PID implemented here
+		//PID controller implemented here
 		//PID constants are
 		float KP = 0.25; float  KD = 0.05; float  KI = 0.1;
 
-		int rateSensorPin = index + 2; //TODO fix this to read the correct sensor
+		int rateSensorPin = index + 1; //TODO fix this to read the correct sensor
 		//get the current rate from the sensor
 		int currentSpeed = sensorArray[rateSensorPin].currentValue;
 		int currentError = currentSpeed - targetPosition;
@@ -172,8 +256,7 @@ void MotorActuator::updateActuatorValue(int elapsedMS) {
 
 		if (newValue < 0) newValue = 0;
 		if (newValue > 180) newValue = 180;
-		s.write((int)newValue);
-		//if (index == 10) Serial.println(newValue);
+		setMotorSpeed((int)newValue);
 		previousError = currentError;
 		break;
 
@@ -182,40 +265,34 @@ void MotorActuator::updateActuatorValue(int elapsedMS) {
 	}
 }
 
-bool MotorActuator::setValue(char code, int value) {
+
+bool MotorActuator::setValue(char code, long value) {
 	//Serial.print("motor SetValue:"); Serial.print(code);
 	//Serial.print(":"); Serial.println(value);
 	bool handled = Actuator::setValue(code, value);
 	switch (code)
 	{
 	case 'T': //the Target value
-		targetPosition = value;
+		targetPosition = value - 90;
 		//if you're in raw mode, everything happens right here...update does nothing
 		if (motorControlMode == raw) {
-			s.write(targetPosition);
+			setMotorSpeed(value);
+		}
+		else if (value == 90) {
+			setMotorSpeed(90);
+			integrationSum = 0;
+			previousError = 0;
 		}
 		handled = true;
 		break;
 	case 'e':
+		enableMotor((bool)value);
 		enabled = value;
-		if (!value) {
-			if (s.attached())
-				s.detach();
-		}
-		else {
-			if (!s.attached()) {
-				s.attach(pinNumber, 1000, 2000);
-			}
-		}
 		handled = true;
 		break;
 	case 'c':
 		MotorControlMode mcm = (MotorControlMode)value;
 		motorControlMode = mcm;
-		break;
-	case 'd':
-		distanceToTravel = value;
-		handled = true;
 		break;
 	}
 	return handled;

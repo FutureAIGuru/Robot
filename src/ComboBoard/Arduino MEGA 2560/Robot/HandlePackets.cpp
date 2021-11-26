@@ -32,17 +32,16 @@ void Incoming::handleIncomingPackets() {
 				if (actuatorNum < 0 || actuatorNum >= MAX_ACTUATORS) break;
 				param = getNextParam();
 				char paramCode = getParamCode(param);
-				int value = getParamValue(param);
-
+				
 				//continue reading params until you run out or encounter another sensor/actuator
 				while (param != NULL && paramCode != 'A' && paramCode != 'S') {
-					int value = getParamValue(param);
+					long value = getParamValue(param);
 					//be careful...if the type is changed, the actuator will be reallocated
 					actuators[actuatorNum]->setValue(paramCode, value);
 					param = getNextParam();
 					paramCode = getParamCode(param);
 				}
-				//Serial.println(myActuator->ToString());
+				//Serial.println(actuators[actuatorNum]->ToString());
 			}
 
 			//Setup sensor 
@@ -55,7 +54,7 @@ void Incoming::handleIncomingPackets() {
 
 				//continue reading params until you run out or encounter another sensor/actuator
 				while (param != NULL && paramCode != 'A' && paramCode != 'S') {
-					int value = getParamValue(param);
+					long value = getParamValue(param);
 					mySensor->setValue(paramCode, value);
 					param = getNextParam();
 					paramCode = getParamCode(param);
@@ -66,7 +65,6 @@ void Incoming::handleIncomingPackets() {
 		}
 	}
 }
-
 
 
 char inputBuffer[INPUT_BUFFER_SIZE + 3];
@@ -95,8 +93,8 @@ char* Incoming::getNextParam() {
 char Incoming::getParamCode(char* param) {
 	return param[0];
 }
-int Incoming::getParamValue(char* param) {
-	int retVal = 0;
+long Incoming::getParamValue(char* param) {
+	long retVal = 0;
 	bool numIsNegative = false;
 	if (param[0] == 0) return 0;
 	param++;

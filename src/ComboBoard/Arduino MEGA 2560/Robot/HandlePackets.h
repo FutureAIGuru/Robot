@@ -17,7 +17,7 @@ public:
 private:
 	int getInputPacket(char* buffer, int maxSize);
 	char* getNextParam();
-	int getParamValue(char* param);
+	long getParamValue(char* param);
 	char getParamCode(char* param);
 };
 #endif

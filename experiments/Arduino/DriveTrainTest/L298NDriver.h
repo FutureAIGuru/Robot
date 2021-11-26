@@ -1,5 +1,3 @@
-// L298NDriver.h
-
 #ifndef _L298NDRIVER_h
 #define _L298NDRIVER_h
 
@@ -20,7 +18,7 @@ public:
     void setSpeedRange(int min, int max);
     void setDirection(Direction direction);
     Direction getDirection(void);
-    void setSpeed(int speed, int ramping = 1);
+    void setSpeed(int speed);
     int getSpeed(void);
     int calculateSpeed(void);
     void emergencyStop(void);

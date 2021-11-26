@@ -1,63 +1,67 @@
-/*
-  Name:   L2989NDriver.ino
-  License:    MIT
-  Author:   André Slabber
-*/
-
-/*
- * Define macros for input and output pin etc.
- */
-
 #include "L298NDriver.h"
+#include "OmniWheel.h"
 
-const int rr_pins[] = {22, 23, 2};
-const int rl_pins[] = {24, 25, 3};
-const int fl_pins[] = {26, 27, 4};
-const int fr_pins[] = {28, 29, 5};
+// pin assignments
+const int left_pins[]  = {22, 23, 2};
+const int right_pins[] = {24, 25, 3};
 
-L298NDriver wheel_fl = L298NDriver();
-L298NDriver wheel_fr = L298NDriver();
-L298NDriver wheel_rl = L298NDriver();
-L298NDriver wheel_rr = L298NDriver();
+const bool separate_drivers = false;
+
+// values for separate drivers
+L298NDriver wheel_left  = L298NDriver();
+L298NDriver wheel_right = L298NDriver();
+
+bool left  = true;
+bool right = true;
+    
+// Values for combined drive
+OmniWheel drive = OmniWheel();
+
+
+int spd = 0;
 
 void setup() 
 {
-    int spd = 40;
-    bool fl = true;
-    bool fr = true;
-    bool rl = true;
-    bool rr = true;
-    Serial.begin(115200);
-    if (fl)
+    Serial.begin(9600);
+    if (left && separate_drivers)
     {
-        wheel_fl.configurePins(fl_pins[0], fl_pins[1], fl_pins[2]);
-        wheel_fl.setSpeedRange(55, 255);
-        wheel_fl.setDirection(Left);
-        wheel_fl.setSpeed(spd);    
+        wheel_left.configurePins(left_pins[0], left_pins[1], left_pins[2]);
+        wheel_left.setSpeedRange(0, 255);
     }
-    if (fr)
+    if (right && separate_drivers)
     {
-        wheel_fr.configurePins(fr_pins[0], fr_pins[1], fr_pins[2]);
-        wheel_fr.setSpeedRange(40, 255);
-        wheel_fr.setDirection(Right);
-        wheel_fr.setSpeed(spd);    
+        wheel_right.configurePins(right_pins[0], right_pins[1], right_pins[2]);
+        wheel_right.setSpeedRange(0, 255);
     }
-    if (rl)
+    if (!separate_drivers)
     {
-        wheel_rl.configurePins(rl_pins[0], rl_pins[1], rl_pins[2]);
-        wheel_rl.setSpeedRange(40, 255);
-        wheel_rl.setDirection(Left);
-        wheel_rl.setSpeed(spd);  
-    }
-    if (rr)
-    {
-        wheel_rr.configurePins(rr_pins[0], rr_pins[1], rr_pins[2]);
-        wheel_rr.setSpeedRange(40, 255);
-        wheel_rr.setDirection(Right);
-        wheel_rr.setSpeed(spd);  
+        drive.configurePins(left_pins, right_pins);
     }
 }
 
 void loop() 
 {
+    spd += 5;
+    if (spd > 255)
+    {
+      spd = 0;
+    }
+    
+    if (left && separate_drivers)
+    {
+        wheel_left.setDirection(Left);
+        wheel_left.setSpeed(spd);    
+    }
+    if (right && separate_drivers)
+    {
+        wheel_right.setDirection(Left);
+        wheel_right.setSpeed(spd);    
+    }
+    if (!separate_drivers)
+    {
+        drive.setMove(Forward);
+        // drive.setTurn(SpinRight);
+        drive.setSpeed(spd);    
+    }
+    delay(100);
 }

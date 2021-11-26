@@ -1,7 +1,3 @@
-// 
-// 
-// 
-
 #include "L298NDriver.h"
 
 L298NDriver::L298NDriver(void)
@@ -37,7 +33,7 @@ void L298NDriver::setSpeedRange(int min_speed, int max_speed)
 
 void L298NDriver::setDirection(Direction direction)
 {
-    setSpeed(0, 10);
+    setSpeed(0);
     _set_direction = direction;
     _command_motor();
 }
@@ -47,41 +43,26 @@ Direction L298NDriver::getDirection()
     return _set_direction;
 }
 
-void L298NDriver::setSpeed(int speed, int ramp)
+void L298NDriver::setSpeed(int speed)
 {
-    int new_speed = min(max(speed, 0), 255);
-    int new_ramp = min(max(ramp, 0), 255);
-    int step = 0;
-    if (_set_speed > speed)
-    {
-        step = -new_ramp;
-    }
-    if (_set_speed < speed)
-    {
-        step = new_ramp;
-    }
-    if (step == 0)
-    {
-        return;
-    }
+    int new_speed = min(max(speed, _min_speed), _max_speed);
     while (_set_speed != speed)
     {
-        if (abs(_set_speed - speed) < abs(step))
-        {
-            _set_speed = speed;
-            _command_motor();
-        }
-        else
-        {
-            _set_speed += step;
-            _command_motor();
-        }
+        _set_speed = speed;
+        _command_motor();
     }
+}
+
+log_int(char *label, int value)
+{
+    Serial.print(label);
+	  Serial.print(":");
+    Serial.println(value);
 }
 
 int L298NDriver::calculateSpeed(void)
 {
-    return (_max_speed - _min_speed)/256*_set_speed + _min_speed;
+    return (float)(_max_speed - _min_speed)/(float)256*(float)_set_speed + _min_speed;
 }
 
 int L298NDriver::getSpeed(void)

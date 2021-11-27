@@ -56,7 +56,7 @@ void setupSensors() {
 	Serial.println("MPU Calibrate");
 	mpu.Calibrate();
 	Serial.println("MPU complete");
-	//z = yaw +:left
+	//z = yaw +:right turn
 	//y = roll +:right up
 	//x = pitch  +:pitch up (front)
 
@@ -123,7 +123,7 @@ void Sensor::pollSensorValue() {
 	case mpuSensor:
 		if (millis() - lastMPUExecuteTime > pollingPeriod) {
 			mpu.Execute();
-			Serial.println("mpu.Execute()");
+			//Serial.println("mpu.Execute()");
 			lastMPUExecuteTime = millis();
 		}
 		switch (pinNumber) {

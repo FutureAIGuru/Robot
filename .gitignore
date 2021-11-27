@@ -3,3 +3,9 @@ config.json
 secrets.py
 *.cfg
 copy2localwebserver.cmd
+/src/ComboBoard/Arduino MEGA 2560/Robot/Debug
+/.vs
+/src/ComboBoard/Arduino MEGA 2560/.vs/Robot/v16
+/src/ComboBoard/Arduino MEGA 2560/Robot/.vs/Robot/v16
+/src/ComboBoard/Arduino MEGA 2560/Robot/__vm
+/src/ComboBoard/Arduino MEGA 2560/Robot/Robot.vcxproj.user

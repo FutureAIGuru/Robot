@@ -211,9 +211,9 @@ void MotorActuator::setMotorSpeed(int speed)
 		absSpeed *= 255;
 		absSpeed /= 90;
 		analogWrite(Pin2(), absSpeed);
-//		Serial.print(" Setting Motor Speed: "), Serial.print(speed);
-//		Serial.print(" Abs Speed: "), Serial.print(absSpeed);
-//		Serial.print(" dir: "), Serial.println(dir);
+		Serial.print(" Setting Motor Speed: "), Serial.print(speed);
+		Serial.print(" Abs Speed: "), Serial.print(absSpeed);
+		Serial.print(" dir: "), Serial.println(dir);
 
 		//set the digital pins to control the direction
 		if (dir == 0) {
@@ -235,6 +235,7 @@ void MotorActuator::updateActuatorValue(int elapsedMS) {
 	lastMoved = millis();
 	switch (motorControlMode) {
 	case MotorActuator::raw: //nothing here, it's all handled in the SetValue() method
+		Serial.println("raw setSpeed called");
 		break;
 
 	case MotorActuator::rate:
@@ -256,6 +257,7 @@ void MotorActuator::updateActuatorValue(int elapsedMS) {
 
 		if (newValue < 0) newValue = 0;
 		if (newValue > 180) newValue = 180;
+		Serial.println("rate setSpeed called");
 		setMotorSpeed((int)newValue);
 		previousError = currentError;
 		break;
@@ -267,8 +269,8 @@ void MotorActuator::updateActuatorValue(int elapsedMS) {
 
 
 bool MotorActuator::setValue(char code, long value) {
-	//Serial.print("motor SetValue:"); Serial.print(code);
-	//Serial.print(":"); Serial.println(value);
+	Serial.print("motor SetValue:"); Serial.print(code);
+	Serial.print(":"); Serial.println(value);
 	bool handled = Actuator::setValue(code, value);
 	switch (code)
 	{
@@ -297,5 +299,3 @@ bool MotorActuator::setValue(char code, long value) {
 	}
 	return handled;
 }
-
-

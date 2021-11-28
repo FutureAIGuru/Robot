@@ -17,7 +17,8 @@ def acquire(name):
             acq = f.readline()
             f.close()
         except Exception:
-            print(name, 'not configured yet')
+            # print(name, 'not configured yet')
+            pass
     reply = 'no'
     while acq == '':
         prompt = 'Enter value for ' + name + ':'
@@ -56,5 +57,5 @@ if retries == 0 or station.isconnected() == False:
     # os.remove('password.cfg')
     machine.reset()
 
-print('Connection successful')
-print(station.ifconfig())
+# print('Connection successful')
+# print(station.ifconfig())

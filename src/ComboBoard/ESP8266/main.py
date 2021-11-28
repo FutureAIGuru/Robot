@@ -26,7 +26,7 @@ def check_for_updates():
     old_vrs = tk.rd_file(vrs, '0.0.0')
     new_vrs = tk.do_req(vrs, '0.0.0')
     if str(old_vrs) == str(new_vrs):
-        print('VERSIONS EQUAL, NO UPDATE')
+        # print('VERSIONS EQUAL, NO UPDATE')
         return
     tk.wr_file(vrs, new_vrs)
     txt = tk.do_req(lst)
@@ -46,11 +46,11 @@ def connect_and_subscribe():
     client.subscribe(tp.t_a)
     client.subscribe(tp.t_sc)
     client.subscribe(tp.t_act)
-    print('Connected to MQTT broker', mqtt_server)
+    # print('Connected to MQTT broker', mqtt_server)
     return client
 
 def restart_and_reconnect():
-    print('Failed to connect to MQTT broker. Reconnecting...')
+    # print('Failed to connect to MQTT broker. Reconnecting...')
     time.sleep(1)
     machine.reset()
 
@@ -58,16 +58,16 @@ def handle_acquire(msg):
     """Handle a received acquire message."""
     global mode
     mode = tp.m_c
-    print('connection acquired')
+    # print('connection acquired')
 
 def handle_sw_config(msg):
     """Handle incoming sw_config messages."""
     global mode, sens_list, actr_list
     msg = str(msg)
-    print('sw_config received', msg)
+    # print('sw_config received', msg)
         
     if msg == str(tp.c_end):
-        print('switch to operating mode')
+        # print('switch to operating mode')
         mode = tp.m_o
         return
     if msg in tp.sens_list:
@@ -84,7 +84,7 @@ def handle_actuator_data(msg):
     global actr_list
     for actr in actr_list:
         if actr.label == msg:
-            print('valid actuator message received', msg)
+            # print('valid actuator message received', msg)
                 
 def send_sensor_data():
     """Send sensor messages for all sensors."""
@@ -96,7 +96,7 @@ def on_message(topic, msg):
     """Callback routine for MQTT client."""
     global mode, sens_list, actr_list
     if msg is not None:
-        print('msg found:', mode, topic, msg)
+        # print('msg found:', mode, topic, msg)
         if str(topic) == str(tp.t_a):
             mode = tp.m_a
             handle_acquire(msg)
@@ -111,7 +111,7 @@ def on_message(topic, msg):
 def send_startup_message():
     """Sending the startup invitation."""
     global client, mode
-    print('Sending startup...')
+    # print('Sending startup...')
     client.publish(tp.t_s, tp.link_id)
     mode = tp.m_a
 
@@ -132,10 +132,10 @@ def send_hw_configuration():
     actr_list.append(Actuator(tp.a_cam))
 
     for conf in sens_list:
-        print('publishing sensor:', conf.label)
+        # print('publishing sensor:', conf.label)
         client.publish(tp.t_hc, conf.label)    
     for conf in actr_list:
-        print('subscribing to actuator:', conf.label)
+        # print('subscribing to actuator:', conf.label)
         client.publish(tp.t_hc, conf.label)    
         client.subscribe(conf.label)
         
@@ -150,6 +150,14 @@ uart.init(115200, bits=8, parity=None, stop=1)
 
 # Main program after this...
 
+buff = '0'
+
+while True:
+    if uart.any() > 0:
+        buff = uart.read(1)
+        uart.write(buff)
+
+/*
 try:
     client = connect_and_subscribe()
 except OSError as e:
@@ -179,3 +187,4 @@ while True:
             start_time = time.time()
     except OSError as e:
         restart_and_reconnect()
+*/

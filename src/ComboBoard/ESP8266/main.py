@@ -22,18 +22,25 @@ uart.init(115200, bits=8, parity=None, stop=1)
 #         uart.write(buff)
 
 mode = tp.m_u
-sens_list = [
-    'S0 x2 p0 m1 e1 t100 T200',
-    'S1 x2 p0 m1 e1 t100 T200',
-    'S2 x2 p0 m1 e1 t100 T200',
-    'S3 x2 p0 m1 e1 t100 T200'
-    ]
-actr_list = [
-    'A0 x0 p022223 e1 T90 c0',
-    'A1 x0 p032425 e1 T90 c0',
-    'A2 x0 p042627 e1 T90 c0',
-    'A3 x0 p052829 e1 T90 c0'    
-    ]
+
+# This maps the signals from the Arduino to MQTT 
+sens_dict = {
+    "S0": "S0 x2 p0 m1 e1 t100 T200",
+    "S1": "S1 x2 p0 m1 e1 t100 T200",
+    "S2": "S2 x2 p0 m1 e1 t100 T200",
+    "S3": "S3 x2 p0 m1 e1 t100 T200",
+    "S4": "S4 x2 p0 m1 e1 t100 T200",
+    "S5": "S5 x2 p0 m1 e1 t100 T200",
+    "S6": "S6 x2 p0 m1 e1 t100 T200",
+    "S7": "S7 x2 p0 m1 e1 t100 T200"
+}
+
+actr_dict = {
+    "A0": "A0 x0 p022223 e1 T90 c0",
+    "A1": "A1 x0 p032425 e1 T90 c0",
+    "A2": "A2 x0 p042627 e1 T90 c0",
+    "A3": "A3 x0 p052829 e1 T90 c0"
+}
 
 def upd(src):
     tk.del_file(src)
@@ -80,7 +87,7 @@ def handle_acquire(msg):
 
 def handle_sw_config(msg):
     """Handle incoming sw_config messages."""
-    global mode, sens_list, actr_list
+    global mode, sens_dict, actr_dict
     msg = str(msg)
     print('sw_config received', msg)
         
@@ -88,10 +95,10 @@ def handle_sw_config(msg):
         print('switch to operating mode')
         mode = tp.m_o
         return
-    if msg in sens_list:
+    if msg in sens_dict:
         client.publish(tp.t_hc, msg)    
         return
-    if msg in actr_list:
+    if msg in actr_dict:
         client.subscribe(msg)
         return
     if msg == tp.c_end:
@@ -99,22 +106,24 @@ def handle_sw_config(msg):
                 
 def handle_actuator_data(msg):
     """Handler for actuator messages from the brain."""
-    global actr_list
+    global actr_dict
     msg_parts = msg.split()
-    for actr in actr_list:
-        actr_parts = actr.split()
-        if actr_parts[0] == msg_parts[0]:
-            print('actuator received:', msg)
+    try:
+        actr = actr_dict[msg_parts[0])
+    except KeyError:
+        print('KeyError:', msg_parts)
+    print('actuator received:', msg)
                 
 def send_sensor_data():
     """Send sensor messages for all sensors."""
-    global client, sens_list
-    for sens in sens_list:
+    global client, sens_dict
+    for sens in sens_dict:
+        print('SENS:', sens)
         client.publish(tp.t_sns, sens)
-
+         
 def on_message(topic, msg):
     """Callback routine for MQTT client."""
-    global mode, sens_list, actr_list
+    global mode, sens_dict, actr_dict
     if msg is not None:
         # print('msg found:', mode, topic, msg)
         if str(topic) == str(tp.t_a):
@@ -138,11 +147,11 @@ def send_startup_message():
 
 def send_hw_configuration():
     """Send hw_config messages to the brain."""
-    global sens_list, actr_list
-    for conf in sens_list:
+    global sens_dict, actr_dict
+    for conf in sens_dict:
         print('publishing sensor:', conf)
         client.publish(tp.t_hc, conf)    
-    for conf in actr_list:
+    for conf in actr_dict:
         print('subscribing to actuator:', conf.split()[0])
         client.publish(tp.t_hc, conf)    
         client.subscribe(conf.split()[0])
@@ -150,13 +159,13 @@ def send_hw_configuration():
 
 def recv_sensor_data():
     try:
-        global sens_list, uart, client
+        global sens_dict, uart, client
         sensor = uart.readline()
         if sensor[0] != 'S':
             print('unrecognized sensor input')
             return 
         sensor_parts = sensor.split()
-        for sens in sens_list:
+        for sens in sens_dict:
             if sens.split()[0] == sensor.split()[0]:
                 client.publish(tp.t_sns, sensor)
     except OSError as e:

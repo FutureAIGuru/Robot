@@ -34,16 +34,21 @@ int speed = 0;
 
 const int no_of_ws_pins = 8;
 const int ws_pins[] = {"A8", "A9", "A10", "A11", "A12", "A13", "A14", "A15"};
+int ws_values[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 void SendWheelSensorsToESP8266()
 {
 	  for (int pin = 0; pin < no_of_ws_pins; pin++)
     {
 	      int val = analogRead(ws_pins[pin]);
-		    Serial3.print('S');
-		    Serial3.print(pin, DEC);
-		    Serial3.print(' ');
-        Serial3.println(val);
+		    if (abs(val-ws_values[pin]) > 2)
+		    {
+		        Serial3.print('S');
+		        Serial3.print(pin, DEC);
+		        Serial3.print(' ');
+            Serial3.println(val);
+            ws_values[pin] = val;
+    		}
     }
 }
    

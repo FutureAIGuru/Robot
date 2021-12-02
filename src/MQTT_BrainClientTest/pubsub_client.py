@@ -3,8 +3,6 @@ import paho.mqtt.client as mqtt
 import time
 
 import tp
-from sens import Sensor
-from actr import Actuator
 mqttBroker ="192.168.2.155" 
 
 mode = tp.m_u
@@ -26,15 +24,13 @@ def handle_hw_config(message):
     global mode, sens_list, actr_list
     msg = str(message.payload.decode("utf-8"))
     print('sw_config received', msg)
-        
-    if msg in tp.sens_list:
-        client.subscribe(msg)
+    if msg[0] == 'S':
         client.publish(tp.t_sc, msg)    
-        sens_list.append(Sensor(msg))
+        sens_list.append(msg)
         return
-    if msg in tp.actr_list:
+    if msg[0] == 'A':
         client.publish(tp.t_sc, msg)    
-        actr_list.append(Actuator(msg))
+        actr_list.append(msg)
         return
     if msg == tp.c_end:
         print('switch to operating mode')
@@ -47,9 +43,9 @@ def handle_sensor_data(message):
     msg = str(message.payload.decode("utf-8"))
     parts = msg.split()
     for sens in sens_list:
-        if parts[0] == sens.label:
+        if parts[0] == sens.split()[0]:
             sens.recv_payload(parts)
-    print('Brain in OPERATING mode', msg)
+    print('sensor received', msg)
                 
 def on_message(client, userdata, message):
     global mode
@@ -68,9 +64,10 @@ def on_message(client, userdata, message):
             return
 
 def send_actuators():
-    global client, actr_list
-    for actr in actr_list:
-        client.publish(actr.label, actr.send_payload())
+    global client, actr_list, mode
+    if mode == tp.m_o:
+        for actr in actr_list:
+            client.publish(tp.t_act, actr)
         
 # Main program after this...
 

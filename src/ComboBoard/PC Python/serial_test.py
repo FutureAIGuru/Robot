@@ -9,7 +9,7 @@ while True:
         ser.write(b'0')
         echo = ser.read()
         for i in range(500):
-            new_char = random.choice([b'1', b'0'])
+            new_char = random.choice([b'0', b'1', b'2', b'3', b'4', b'5', b'6', b'7',b'8', b'9'])
             ser.write(new_char)
             echo = ser.read()
             # print(echo)

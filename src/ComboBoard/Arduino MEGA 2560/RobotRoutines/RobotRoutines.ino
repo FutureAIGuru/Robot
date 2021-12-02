@@ -32,6 +32,21 @@ OmniWheel drive = OmniWheel();
 
 int speed = 0;
 
+const int no_of_ws_pins = 8;
+const int ws_pins[] = {"A8", "A9", "A10", "A11", "A12", "A13", "A14", "A15"};
+
+void SendWheelSensorsToESP8266()
+{
+	  for (int pin = 0; pin < no_of_ws_pins; pin++)
+    {
+	      int val = analogRead(ws_pins[pin]);
+		    Serial3.print('S');
+		    Serial3.print(pin, DEC);
+		    Serial3.print(' ');
+        Serial3.println(val);
+    }
+}
+   
 void ProcessCommand(String command)
 {
 	Serial.println(command);
@@ -69,8 +84,8 @@ void SendInfraRedCommand(int command)
 // the setup function runs once when you press reset or power the board
 void setup() 
 {
-	  Serial.begin(115200);
-	  Serial3.begin(115200);
+    Serial.begin(115200);
+    Serial3.begin(115200);
     drive.configurePins(fl_pins, fr_pins, rl_pins, rr_pins);
     IrReceiver.begin(8, false, false);
     Serial.print(F("Ready to receive IR signals at pin "));
@@ -87,8 +102,8 @@ void loop()
      * address is in command is in IrReceiver.decodedIRData.address
      * and up to 32 bit raw data in IrReceiver.decodedIRData.decodedRawData
      */
+	  SendWheelSensorsToESP8266();
 
-    
     if (IrReceiver.decode()) 
 	{
         // Print a short summary of received data

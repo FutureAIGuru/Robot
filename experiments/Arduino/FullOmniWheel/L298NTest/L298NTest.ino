@@ -18,7 +18,7 @@ bool rl = true;
 bool rr = true;
     
 int spd = 0;
-Direction dir = Left;
+Direction dir = CW;
 
 void setup() 
 {
@@ -26,22 +26,22 @@ void setup()
     if (fl)
     {
         wheel_fl.configurePins(pins_fl[0], pins_fl[1], pins_fl[2]);
-        wheel_fl.setSpeedRange(0, 255);
+        wheel_fl.setSpeedRange(20, 255);
     }
     if (fr)
     {
         wheel_fr.configurePins(pins_fr[0], pins_fr[1], pins_fr[2]);
-        wheel_fr.setSpeedRange(0, 255);
+        wheel_fr.setSpeedRange(20, 255);
     }
     if (rl)
     {
         wheel_rl.configurePins(pins_rl[0], pins_rl[1], pins_rl[2]);
-        wheel_rl.setSpeedRange(0, 255);
+        wheel_rl.setSpeedRange(30, 255);
     }
     if (rr)
     {
         wheel_rr.configurePins(pins_rr[0], pins_rr[1], pins_rr[2]);
-        wheel_rr.setSpeedRange(0, 255);
+        wheel_rr.setSpeedRange(20, 255);
     }
 }
 
@@ -51,13 +51,13 @@ void loop()
     if (spd > 255)
     {
       spd = 0;
-      if (dir == Left)
+      if (dir == CW)
       {
-        dir = Right;
+        dir = CCW;
       }
       else
       {
-        dir = Left;
+        dir = CW;
       }
     }
     

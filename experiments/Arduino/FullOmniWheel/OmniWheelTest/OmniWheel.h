@@ -1,9 +1,3 @@
-/*
-	Name:		OmniWheel.h
-	License:   	MIT
-	Author:		André Slabber
-*/
-
 #ifndef _OMNIWHEEL_h
 #define _OMNIWHEEL_h
 
@@ -17,41 +11,14 @@
 
 enum Movement 
 {	
-	Forward = 0,      	Backward = 1,      	Left = 2,        	Right = 3,
-	FrontLeft = 4,    	FrontRight = 5,    	RearLeft = 6,    	RearRight = 7,
-	FrontLeftCW = 8,  	FrontRightCW = 9,  	RearLeftCW = 10, 	RearRightCW = 11, 
+	Forward = 0,      	Backward = 1,      	Right = 2,        	Left = 3,
+	FrontLeft = 4,    	FrontRight = 5,    	RearLeft = 6,    	  RearRight = 7,
+	FrontLeftCW = 8,  	FrontRightCW = 9,  	RearLeftCW = 10, 	  RearRightCW = 11, 
 	FrontLeftCCW = 12, 	FrontRightCCW = 13, RearLeftCCW = 14, 	RearRightCCW = 15, 
 	FrontCW = 16,       FrontCCW = 17,      RearCW = 18,        RearCCW = 19, 
-	RotateCW = 20,      RotateCCW = 21, 	Stop = 22
+	RotateCW = 20,      RotateCCW = 21,   	Stop = 22
 };
 
-int directions[][] = 
-{
-	//FL     FR     RL     RR    MOVEMENT
-	{Left,  Left,  Left,  Left,  Forward}, 
-	{Right, Right, Right, Right, Backward}, 
-	{Left,  Right  Right, Left,  Left}, 
-	{Right, Left,  Left,  Right  Right}, 
-	{None,  Left,  Left,  None,  FrontLeft}, 
-	{Left,  None,  None,  Left,  FrontRight}, 
-	{Right, None,  None,  Right, RearLeft}, 
-	{None,  Right, Right, None,  RearRight}, 
-	{None,  Right, None,  Right, FrontLeftCW}, 
-	{Left,  None,  Left,  None,  FrontRightCW},  // this might not work...
-	{None,  Right, None,  Right, RearLeftCW},    // this might not work...
-	{Left,  None,  Left,  None,  RearRightCW}, 
-	{None,  Left,  None,  Left,  FrontLeftCCW},  // this might not work...
-	{Right, None,  Right, None,  FrontRightCCW}, 
-	{Right, None,  Right, None,  RearLeftCCW}, 
-	{Left,  Left,  Left,  Left,  RearRightCCW}, 
-	{Left,  Left,  Left,  Left,  FrontCW}, 
-	{Left,  Left,  Left,  Left,  FrontCCW}, 
-	{Left,  Left,  Left,  Left,  RearCW}, 
-	{Left,  Left,  Left,  Left,  RearCCW}, 
-	{Left,  Right, Left,  Right, RotateCW}, 
-	{Right, Left,  Right, Left,  RotateCCW}, 
-	{None,  None,  None,  None,  Stop}
-};
 
 class OmniWheel
 {

@@ -2,7 +2,7 @@
 
 L298NDriver::L298NDriver(void)
 {
-    _set_direction = Left;
+    _set_direction = CW;
     _set_speed = 0;
 }
 
@@ -10,18 +10,18 @@ L298NDriver::~L298NDriver()
 {
 }
 
-void L298NDriver::configurePins(int left_pin, int right_pin, int speed_pin)
+void L298NDriver::configurePins(int CCW_pin, int CW_pin, int speed_pin)
 {
-    _left_pin = left_pin;
-    _right_pin = right_pin;
+    _CCW_pin = CCW_pin;
+    _CW_pin = CW_pin;
     _speed_pin = speed_pin;
     _min_speed = 0;
     _max_speed = 255;
-    pinMode(_right_pin, OUTPUT);
-    pinMode(_left_pin, OUTPUT);
+    pinMode(_CCW_pin, OUTPUT);
+    pinMode(_CW_pin, OUTPUT);
     pinMode(_speed_pin, OUTPUT);
-    digitalWrite(_right_pin, LOW);
-    digitalWrite(_left_pin, LOW);
+    digitalWrite(_CCW_pin, LOW);
+    digitalWrite(_CW_pin, LOW);
     analogWrite(_speed_pin, _set_speed);
 }
 
@@ -80,14 +80,19 @@ void L298NDriver::_command_motor(void)
 {
     int outspeed = calculateSpeed();
     analogWrite(_speed_pin, int(outspeed));
-    if (_set_direction == Left)
+    if (_set_direction == CW)
     {
-        digitalWrite(_left_pin, LOW);
-        digitalWrite(_right_pin, HIGH);
+        digitalWrite(_CCW_pin, LOW);
+        digitalWrite(_CW_pin, HIGH);
     }
-    else
+    if (_set_direction == CCW)
     {
-        digitalWrite(_right_pin, LOW);
-        digitalWrite(_left_pin, HIGH);
+        digitalWrite(_CW_pin, LOW);
+        digitalWrite(_CCW_pin, HIGH);
+    }
+    if (_set_direction == Non)
+    {
+        digitalWrite(_CW_pin, LOW);
+        digitalWrite(_CCW_pin, LOW);
     }
 }

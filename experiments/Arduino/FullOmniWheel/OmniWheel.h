@@ -1,9 +1,3 @@
-/*
-	Name:		OmniWheel.h
-	License:   	MIT
-	Author:		André Slabber
-*/
-
 #ifndef _OMNIWHEEL_h
 #define _OMNIWHEEL_h
 
@@ -15,33 +9,39 @@
 
 #include "L298NDriver.h"
 
-enum Move {Forward = 1, Backward = 2};
-enum Turn {SpinLeft = 5, SpinRight = 6, TurnLeft = 7, TurnRight = 8};
+enum Movement 
+{	
+	Forward = 0,      	Backward = 1,      	Right = 2,        	Left = 3,
+	FrontLeft = 4,    	FrontRight = 5,    	RearLeft = 6,    	  RearRight = 7,
+	FrontLeftCW = 8,  	FrontRightCW = 9,  	RearLeftCW = 10, 	  RearRightCW = 11, 
+	FrontLeftCCW = 12, 	FrontRightCCW = 13, RearLeftCCW = 14, 	RearRightCCW = 15, 
+	FrontCW = 16,       FrontCCW = 17,      RearCW = 18,        RearCCW = 19, 
+	RotateCW = 20,      RotateCCW = 21,   	Stop = 22
+};
+
 
 class OmniWheel
 {
 public:
     OmniWheel(void);
     ~OmniWheel(void);
-    void configurePins(int left[], int right[]);
-    void setMove(Move nextMove);
-	void setTurn(Turn newTurn);
+    void configurePins(int fl[], int fr[], int rl[], int rr[]);
+    void setMovement(Movement nextMove);
     void setSpeed(int speed);
-	void setSpeedOffset(int offset);
 	void setFaster(int steps);
 	void setSlower(int steps);
-	Move getMove(void);
-	Turn getTurn(void);
+	Movement getMovement(void);
     int getSpeed(void);
     void emergencyStop(void);
 
 private:
-	Move _set_move;
-	Turn _set_turn;
-	int  _set_speed;
+	Movement _move;
+	int      _speed;
     
-    L298NDriver _left_motor;
-    L298NDriver _right_motor;
+    L298NDriver _fl;
+    L298NDriver _fr;
+    L298NDriver _rl;
+    L298NDriver _rr;
 };
 
 #endif

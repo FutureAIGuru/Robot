@@ -1,6 +1,6 @@
 # Overview
 
-The FullOmniWheel folder this README.md is found in is the primary source for the L298NDriver and the OmniWheel classes. The .h and .cpp files alongside it are copies of the files in the two folders once they have been fully debugged,
+The FullOmniWheel folder this README.md is found in is the primary source for the L298NDriver and the OmniWheel classes. The .h and .cpp files alongside it are copies of the files in the two folders once they have been fully debugged.
 
 ## L298NDriverTest
 

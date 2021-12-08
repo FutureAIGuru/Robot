@@ -25,17 +25,17 @@ void OmniWheel::configurePins(int fl[], int fr[], int rl[], int rr[])
 	_fr_motor.configurePins(fr[0], fr[1], fr[2]);
 	_rl_motor.configurePins(rl[0], rl[1], rl[2]);
 	_rr_motor.configurePins(rr[0], rr[1], rr[2]);
-  _fl_motor.setSpeedRange(55, 255);
-  _fr_motor.setSpeedRange(40, 255);
-  _rl_motor.setSpeedRange(40, 255);
-  _rr_motor.setSpeedRange(40, 255);
+    _fl_motor.setSpeedRange(55, 255);
+    _fr_motor.setSpeedRange(40, 255);
+    _rl_motor.setSpeedRange(40, 255);
+    _rr_motor.setSpeedRange(40, 255);
 }
 
 void OmniWheel::setMove(Move newMove)
 {
 	_set_move = newMove;
-  int last_speed = _set_speed;
-  setSpeed(0);
+    int last_speed = _set_speed;
+    setSpeed(0);
 	switch(_set_move)
 	{
 		case Forward:

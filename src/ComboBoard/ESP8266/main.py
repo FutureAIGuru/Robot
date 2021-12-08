@@ -109,7 +109,7 @@ def handle_actuator_data(msg):
     global actr_dict
     msg_parts = msg.split()
     try:
-        actr = actr_dict[msg_parts[0])
+        actr = actr_dict[str(msg_parts[0])]
     except KeyError:
         print('KeyError:', msg_parts)
     print('actuator received:', msg)
@@ -183,7 +183,7 @@ try:
 except OSError as e:
     print('connect_and_subscribe exception', e)
     time.sleep(5)
-    # restart_and_reconnect()
+    restart_and_reconnect()
 
 start_time = time.time()
 

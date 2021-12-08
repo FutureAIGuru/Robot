@@ -4,9 +4,66 @@
 	Author:		André Slabber
 */
 
-/*
- * Define macros for input and output pin etc.
- */
+// This section is used to send wheel sensor messages to the ESP8266
+
+const int no_of_ws_pins = 8;
+const char* ws_pins[] = {"A8", "A9", "A10", "A11", "A12", "A13", "A14", "A15"};
+int ws_values[] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+void SendWheelSensorsToESP8266()
+{
+	  for (int pin = 0; pin < no_of_ws_pins; pin++)
+    {
+	    int val = analogRead(ws_pins[pin]);
+		if (abs(val-ws_values[pin]) > 2)
+		{
+		    Serial3.print('S');
+		    Serial3.print(pin, DEC);
+		    Serial3.print(' ');
+            Serial3.println(val);
+            ws_values[pin] = val;
+    	}
+	}
+}
+
+// This section is used to receive actuator messages from the ESP8266
+
+#include "Actuator.h"
+String candidate = String("");
+const int actorCount = 30;
+Actuator actr_array[actorCount];
+
+void ReceiveActuatorMessagesFromESP8266()
+{
+    // Actuator messages are one line each, starting with 'Axx'
+	candidate = Serial.readStringUntil('\n');
+ 	if (candidate.length() > 0 && candidate[0] == 'A')
+	{
+       int space = candidate.indexOf(' ');
+       String actr_string = candidate.substring(1, space);
+       int act_no = actr_string.toInt();
+       Serial.print("actor found:");
+       Serial.println(act_no);
+       actr_array[act_no].processCommand(candidate);
+       Serial.println(candidate);
+	}
+}
+   
+void ProcessActuators()
+{
+    // Actual Actuators have an ActNo that is equal to their index in the array
+    for( int index = 0; index < actorCount; index++)
+    {
+        if (actr_array[index].getActNo() == index)
+        {
+            actr_array[index].executeCommand();
+        }
+    }
+}
+   
+
+// this section handles infrared reception of commands
+
 #define IR_RECEIVE_PIN      2
 #define IR_SEND_PIN         3
 //#define TONE_PIN            4
@@ -16,42 +73,6 @@
 
 #include <IRremote.h>
 
-#include "L298NDriver.h"
-#include "OmniWheel.h"
-
-const int fl_pins[] = {26, 27, 4};
-const int fr_pins[] = {28, 29, 5};
-const int rr_pins[] = {22, 23, 2};
-const int rl_pins[] = {24, 25, 3};
-
-L298NDriver wheel_fl = L298NDriver();
-L298NDriver wheel_fr = L298NDriver();
-L298NDriver wheel_rl = L298NDriver();
-L298NDriver wheel_rr = L298NDriver();
-OmniWheel drive = OmniWheel();
-
-int speed = 0;
-
-const int no_of_ws_pins = 8;
-const int ws_pins[] = {"A8", "A9", "A10", "A11", "A12", "A13", "A14", "A15"};
-int ws_values[] = {0, 0, 0, 0, 0, 0, 0, 0};
-
-void SendWheelSensorsToESP8266()
-{
-	  for (int pin = 0; pin < no_of_ws_pins; pin++)
-    {
-	      int val = analogRead(ws_pins[pin]);
-		    if (abs(val-ws_values[pin]) > 2)
-		    {
-		        Serial3.print('S');
-		        Serial3.print(pin, DEC);
-		        Serial3.print(' ');
-            Serial3.println(val);
-            ws_values[pin] = val;
-    		}
-    }
-}
-   
 void ProcessCommand(String command)
 {
 	Serial.println(command);
@@ -86,6 +107,24 @@ void SendInfraRedCommand(int command)
 	}
 }
 
+// definitions for motordrive
+
+#include "L298NDriver.h"
+#include "OmniWheel.h"
+
+const int fl_pins[] = {26, 27, 4};
+const int fr_pins[] = {28, 29, 5};
+const int rr_pins[] = {22, 23, 2};
+const int rl_pins[] = {24, 25, 3};
+
+L298NDriver wheel_fl = L298NDriver();
+L298NDriver wheel_fr = L298NDriver();
+L298NDriver wheel_rl = L298NDriver();
+L298NDriver wheel_rr = L298NDriver();
+OmniWheel drive = OmniWheel();
+
+int speed = 0;
+
 // the setup function runs once when you press reset or power the board
 void setup() 
 {
@@ -99,16 +138,10 @@ void setup()
 
 void loop() 
 {
-    /*
-     * Check if received data is available and if yes, try to decode it.
-     * Decoded result is in the IrReceiver.decodedIRData structure.
-     *
-     * E.g. command is in IrReceiver.decodedIRData.command
-     * address is in command is in IrReceiver.decodedIRData.address
-     * and up to 32 bit raw data in IrReceiver.decodedIRData.decodedRawData
-     */
-	  SendWheelSensorsToESP8266();
-
+	SendWheelSensorsToESP8266();
+    ReceiveActuatorMessagesFromESP8266();
+    ProcessActuators();
+    
     if (IrReceiver.decode()) 
 	{
         // Print a short summary of received data

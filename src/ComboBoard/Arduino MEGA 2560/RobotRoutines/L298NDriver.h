@@ -37,5 +37,4 @@ private:
     Direction _set_direction = Left;
 };
 
-
 #endif

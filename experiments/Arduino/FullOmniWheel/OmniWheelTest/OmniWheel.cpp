@@ -3,6 +3,9 @@
 int dir_cmds[][5] = 
 {
    //FL     FR     RL     RR     MOVEMENT
+    {Non,   Non,   Non,   Non,   Stop}, 
+    {CW,    CCW,   CW,    CCW,   RotateCW}, 
+    {CCW,   CW,    CCW,   CW,    RotateCCW}, 
     {CW,    CW,    CW,    CW,    Forward}, 
     {CCW,   CCW,   CCW,   CCW,   Backward}, 
     {CW,    CCW,   CCW,   CW,    Right}, 
@@ -15,13 +18,10 @@ int dir_cmds[][5] =
     {Non,   Non,   CCW,   CW,    FrontCCW}, 
     {CW,    CCW,   Non,   Non,   RearCW}, 
     {CCW,   CW,    Non,   Non,   RearCCW}, 
-    {CW,    CCW,   CW,    CCW,   RotateCW}, 
-    {CCW,   CW,    CCW,   CW,    RotateCCW}, 
     {Non,   CCW,   Non,   CCW,   FrontLeftCW}, 
     {Non,   CW,    Non,   CW,    FrontLeftCCW},
     {CW,    Non,   CW,    Non,   FrontRightCW},
-    {CCW,   Non,   CCW,   Non,   FrontRightCCW}, 
-    {Non,   Non,   Non,   Non,   Stop}, 
+    {CCW,   Non,   CCW,   Non,   FrontRightCCW}
 };
 
 OmniWheel::OmniWheel(void)

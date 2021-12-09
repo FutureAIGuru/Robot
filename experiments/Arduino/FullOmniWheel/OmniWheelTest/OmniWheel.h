@@ -11,6 +11,9 @@
 
 enum Movement 
 {	
+    Stop,
+    RotateCW,
+    RotateCCW,
     Forward,
     Backward,
     Right,
@@ -23,13 +26,10 @@ enum Movement
     FrontCCW,
     RearCW,
     RearCCW,
-    RotateCW,
-    RotateCCW,
     FrontLeftCW,
     FrontLeftCCW,
     FrontRightCW,
-    FrontRightCCW,
-    Stop
+    FrontRightCCW
 };
 
 

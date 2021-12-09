@@ -3,29 +3,25 @@
 int dir_cmds[][5] = 
 {
    //FL     FR     RL     RR     MOVEMENT
-  {CW,    CW,    CW,    CW,    Forward}, 
-  {CCW,   CCW,   CCW,   CCW,   Backward}, 
-  {CW,    CCW,   CCW,   CW,    Right}, 
-  {CCW,   CW,    CW,    CCW,   Left}, 
-  {Non,   CW,    CW,    Non,   FrontLeft}, 
-  {CW,    Non,   Non,   CW,    FrontRight}, 
-  {CCW,   Non,   Non,   CCW,   RearLeft}, 
-  {Non,   CCW,   CCW,   Non,   RearRight}, 
-  {Non,   CCW,   Non,   CCW,   FrontLeftCW}, 
-  {CW,    Non,   CW,    Non,   FrontRightCW},
-  {Non,   CCW,   Non,   CCW,   RearLeftCW},    // more like FrontLeftCW...
-  {CW,    Non,   CW,    Non,   RearRightCW}, 
-  {Non,   CW,    Non,   CW,    FrontLeftCCW},  // this might not work...
-  {CCW,   Non,   CCW,   Non,   FrontRightCCW}, 
-  {CCW,   Non,   CCW,   Non,   RearLeftCCW}, 
-  {CW,    CW,    CW,    CW,    RearRightCCW}, 
-  {Non,   Non,   CW,    CCW,   FrontCW}, 
-  {Non,   Non,   CCW,   CW,    FrontCCW}, 
-  {CW,    CCW,   Non,   Non,   RearCW}, 
-  {CCW,   CW,    Non,   Non,   RearCCW}, 
-  {CW,    CCW,   CW,    CCW,   RotateCW}, 
-  {CCW,   CW,    CCW,   CW,    RotateCCW}, 
-  {Non,   Non,   Non,   Non,   Stop}
+    {CW,    CW,    CW,    CW,    Forward}, 
+    {CCW,   CCW,   CCW,   CCW,   Backward}, 
+    {CW,    CCW,   CCW,   CW,    Right}, 
+    {CCW,   CW,    CW,    CCW,   Left}, 
+    {Non,   CW,    CW,    Non,   FrontLeft}, 
+    {Non,   CCW,   CCW,   Non,   RearRight}, 
+    {CW,    Non,   Non,   CW,    FrontRight}, 
+    {CCW,   Non,   Non,   CCW,   RearLeft}, 
+    {Non,   Non,   CW,    CCW,   FrontCW}, 
+    {Non,   Non,   CCW,   CW,    FrontCCW}, 
+    {CW,    CCW,   Non,   Non,   RearCW}, 
+    {CCW,   CW,    Non,   Non,   RearCCW}, 
+    {CW,    CCW,   CW,    CCW,   RotateCW}, 
+    {CCW,   CW,    CCW,   CW,    RotateCCW}, 
+    {Non,   CCW,   Non,   CCW,   FrontLeftCW}, 
+    {Non,   CW,    Non,   CW,    FrontLeftCCW},
+    {CW,    Non,   CW,    Non,   FrontRightCW},
+    {CCW,   Non,   CCW,   Non,   FrontRightCCW}, 
+    {Non,   Non,   Non,   Non,   Stop}, 
 };
 
 OmniWheel::OmniWheel(void)

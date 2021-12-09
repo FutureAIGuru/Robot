@@ -1,3 +1,4 @@
+
 #include "OmniWheel.h"
 
 // drive motor pin assignments
@@ -19,7 +20,7 @@ void setup()
 
 void loop() 
 {
-    for (move = 0; move < 22; move++)
+    for (move = 0; move < 19; move++)
     {
         platform.setMovement((Movement)move);
         for (spd = 0; spd < 255; spd++)

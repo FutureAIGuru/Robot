@@ -11,12 +11,25 @@
 
 enum Movement 
 {	
-	Forward = 0,      	Backward = 1,      	Right = 2,        	Left = 3,
-	FrontLeft = 4,    	FrontRight = 5,    	RearLeft = 6,    	  RearRight = 7,
-	FrontLeftCW = 8,  	FrontRightCW = 9,  	RearLeftCW = 10, 	  RearRightCW = 11, 
-	FrontLeftCCW = 12, 	FrontRightCCW = 13, RearLeftCCW = 14, 	RearRightCCW = 15, 
-	FrontCW = 16,       FrontCCW = 17,      RearCW = 18,        RearCCW = 19, 
-	RotateCW = 20,      RotateCCW = 21,   	Stop = 22
+    Forward,
+    Backward,
+    Right,
+    Left,
+    FrontLeft,
+    RearRight,
+    FrontRight,
+    RearLeft,
+    FrontCW,
+    FrontCCW,
+    RearCW,
+    RearCCW,
+    RotateCW,
+    RotateCCW,
+    FrontLeftCW,
+    FrontLeftCCW,
+    FrontRightCW,
+    FrontRightCCW,
+    Stop
 };
 
 

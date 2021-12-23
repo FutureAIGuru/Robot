@@ -1,6 +1,5 @@
 import time
 import machine
-import micropython
 import network
 import esp
 esp.osdebug(None)
@@ -19,7 +18,6 @@ def acquire(name):
         except Exception:
             print(name, 'not configured yet')
             pass
-    reply = 'no'
     while acq == '':
         prompt = 'Enter value for ' + name + ':'
         acq = input(prompt)
@@ -31,12 +29,11 @@ def acquire(name):
     f.write(acq)
     f.close()
     return acq
-    
-# set up the wifi client connection
+
+
+# set up the WiFi client connection
 ssid = acquire('SSID')
 password = acquire('password')
-mqtt_server = acquire('mqtt_server')
-client_id = acquire('client_id')
 
 last_message = 0
 message_interval = 5

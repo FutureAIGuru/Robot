@@ -1,6 +1,0 @@
-umqttsimple.py
-urequests.py
-__init__.py
-boot.py
-main.py
-tk.py

@@ -73,8 +73,8 @@ int curInputPtr = 0;
 
 int Incoming::getInputPacket(char* buffer, int maxSize) 
 {
-	if (!Serial3.available()) return 0;
-	char c = Serial3.read();
+	if (!Serial.available()) return 0;
+	char c = Serial.read();
 	inputBuffer[curInputPtr++] = c;
 	inputBuffer[curInputPtr] = 0;
 	if (curInputPtr >= maxSize) return -1;

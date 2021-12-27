@@ -122,7 +122,7 @@ void handleSensors()
 
 void sendSensorValue(int sensorNum, int sensorValue) 
 {
-	Serial3.print("s"); Serial3.print(sensorNum); Serial3.print(":"); Serial3.println(sensorValue);
+	Serial.print("s"); Serial.print(sensorNum); Serial.print(":"); Serial.println(sensorValue);
 }
 
 void Sensor::pollSensorValue() 
@@ -208,10 +208,10 @@ void Sensor::setValue(char code, int value)
 
 void Sensor::reportSensorValue() 
 {
-	Serial3.print("S");
-	Serial3.print(index);
-	Serial3.print(":");
-	Serial3.println(currentValue);
+	Serial.print("S");
+	Serial.print(index);
+	Serial.print(":");
+	Serial.println(currentValue);
 	lastValue = currentValue;
 	lastReported = millis();
 }

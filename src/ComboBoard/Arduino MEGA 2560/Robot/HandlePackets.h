@@ -1,5 +1,3 @@
-// HandlePackets.h
-
 #ifndef _HandlePackets_h
 #define _HandlePackets_h
 
@@ -9,15 +7,17 @@
 #include "WProgram.h"
 #endif
 
-class Incoming {
+class Incoming 
+{
 public:
-	void handleIncomingPackets();
-	void setupIncomingPackets();
+	void setupIncomingPackets();   // for setup()
+	void handleIncomingPackets();  // for loop()
 
 private:
-	int getInputPacket(char* buffer, int maxSize);
+	int   getInputPacket(char* buffer, int maxSize);
 	char* getNextParam();
-	long getParamValue(char* param);
-	char getParamCode(char* param);
+	long  getParamValue(char* param);
+	char  getParamCode(char* param);
 };
+
 #endif

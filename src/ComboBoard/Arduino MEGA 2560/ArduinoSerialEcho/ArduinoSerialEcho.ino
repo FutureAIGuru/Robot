@@ -1,7 +1,15 @@
-char inByte = 0;
+const int array_size = 30;
+String actuators[array_size];
+String sensors[array_size];
+String ser_recv = "";
 
 void setup() 
 {
+    for (int i=0; i < array_size; i++)
+    {
+        actuators[i] = "";
+        sensors[i] = "";
+    }
     Serial.begin(115200);
     while (!Serial);
     Serial3.begin(115200);
@@ -13,14 +21,13 @@ void loop()
 {
     if (Serial3.available()) 
     {
-        inByte = Serial3.read();
-        Serial3.write(inByte);
-        // Serial.print("[");
-        Serial.print(inByte);
-        // Serial.print("]");
+        ser_recv = Serial3.readStringUntil(terminator);
+        Serial3.write(ser_recv);
+        Serial.print(ser_recv);
     }
+    
 	  // used the echoed character to switch the onboard LED
-  	if (inByte == '0')
+  	if (actuator_cmd[0] == 'A')
     {
         //Serial.println("");
         //Serial.println("LED OFF");

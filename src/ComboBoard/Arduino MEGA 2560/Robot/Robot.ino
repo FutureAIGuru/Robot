@@ -1,50 +1,35 @@
-
-
-#include "handlePackets.h"
-#include "handleActuators.h"
+#include "HandlePackets.h"
 #include "HandleSensors.h"
-
+#include "HandleActuators.h"
 
 Incoming input;
 
-//heartbeat LED
-#define LED_TOGGLE_DELAY 500
-unsigned long ledToggleTime = 0;
-bool ledIsOn = false;
-
-void setup() {
-	Serial.begin(115200);
-	Serial.println("Hello world");
-	input.setupIncomingPackets();
-	setupActuators();
-	setupSensors();
-
-	//setup heartbeat
-	//pinMode(13, OUTPUT);
-	//digitalWrite(13, HIGH);
-	//ledToggleTime = millis();
-
-	Serial.println("Initialization Complete");
-
+void setup() 
+{
+    // initialize Serial for debugging messages
+    Serial.begin(115200);
+    while (!Serial);
+    
+    // initialize Serial3 for communication with ESP8266
+    Serial3.begin(115200);
+    
+    // initialize onboard LED and set to ON
+    pinMode(13, OUTPUT);
+    digitalWrite(13, HIGH);
+    
+    // call the necessary initialization routines for our classes
+    input.setupIncomingPackets();
+    setupActuators();
+    setupSensors();
+    
+    // signal Init complete to serial...
+    Serial.println("MSG: Initialization Complete");
 }
 
-
-
-void loop() {
-
-	input.handleIncomingPackets();
-
-	handleActuators();
-
-	handleSensors();
-
-	//if (millis() > ledToggleTime + LED_TOGGLE_DELAY) {
-	//	ledToggleTime = millis();
-	//	if (ledIsOn)
-	//		digitalWrite(13, LOW);
-	//	else
-	//		digitalWrite(13, HIGH);
-	//	ledIsOn = !ledIsOn;
-	//}
+void loop() 
+{
+    // call the handlers we defined for the loop
+    input.handleIncomingPackets();
+    handleActuators();
+    handleSensors();
 }
-

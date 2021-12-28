@@ -7,45 +7,40 @@
 
 Actuator* actuators[MAX_ACTUATORS];
 
-#define ACTUATOR_UPDATE_INTERVAL 25  // update motor speed at 50 hz
+#define ACTUATOR_UPDATE_INTERVAL 25  //update motor speed at 50 hz
 
 const char* actuatorTypeName[] = { "motor", "servo" };
 
 
-void setupActuators() 
-{
+void setupActuators() {
 	//initialize the array
-	for (int i = 0; i < MAX_ACTUATORS; i++) 
-    {
+	for (int i = 0; i < MAX_ACTUATORS; i++) {
 		actuators[i] = new Actuator();
 		actuators[i]->index = i;
 	}
+
+
 }
 
-void handleActuators() 
-{
-	// update actuator values 
+void handleActuators() {
+	//update actuator values 
 	unsigned long currentTime = millis();
 	for (int i = 0; i < MAX_ACTUATORS; i++)
 	{
 		Actuator* theActuator = actuators[i];
 		int elapsedMS = currentTime - theActuator->lastMoved;
-		if (theActuator->IsEnabled() && elapsedMS >= ACTUATOR_UPDATE_INTERVAL) 
-        {
+		if (theActuator->IsEnabled() && elapsedMS >= ACTUATOR_UPDATE_INTERVAL) {
 			theActuator->updateActuatorValue(elapsedMS);
 		}
 	}
 }
 
-void Actuator::updateActuatorValue(int elapsedMS) 
-{
+void Actuator::updateActuatorValue(int elapsedMS) {
 }
 
-bool Actuator::setValue(char code, long value) 
-{
+bool Actuator::setValue(char code, long value) {
 	bool handled = false;
-	switch (code) 
-    {
+	switch (code) {
 	case 'm':
 		minValue = value;
 		if (targetPosition < minValue)targetPosition = minValue;
@@ -62,6 +57,7 @@ bool Actuator::setValue(char code, long value)
 		pinNumber = value;
 		handled = true;
 		break;
+
 	case 't': //time to reach target
 		targetTime = value;
 		handled = true;
@@ -74,7 +70,7 @@ bool Actuator::setValue(char code, long value)
 			actuators[index] = new MotorActuator();
 			break;
 		case servo:
-			actuators[index] = new ServoActuator();
+			actuators[index] = new ServoActuator(); //servo actuator?
 			break;
 		}
 		actuators[index]->index = index;
@@ -87,54 +83,47 @@ bool Actuator::setValue(char code, long value)
 	return handled;
 }
 
-String Actuator::ToString() 
-{
-  String s = "Actuator: ";
-  s = s + index + " Enb:" + boolTypeName[enabled] + " Type:" + actuatorTypeName[aType] + " curPos:" + currentPosition + " t" +
-    targetTime + " p" + pinNumber + " m" + minValue + " M" + maxValue + " T" + targetPosition;
+String Actuator::ToString() {
+	String s = "Actuator: ";
+	s = s + index + " Enb:" + boolTypeName[enabled] + " Type:" + actuatorTypeName[aType] + " curPos:" + currentPosition + " t" +
+		targetTime + " p" + pinNumber + " m" + minValue + " M" + maxValue + " T" + targetPosition;
+	return s;
 }
+
 
 /******************************************************
 Special Stuff for Servos
 *******************************************************/
-void ServoActuator::updateActuatorValue(int elapsedMS) 
-{
+void ServoActuator::updateActuatorValue(int elapsedMS) {
 	lastMoved = millis();
 	if (moving &&
 		(currentPosition <= targetPosition && rate < 0 ||
-			currentPosition >= targetPosition && rate > 0)) 
-    {
+			currentPosition >= targetPosition && rate > 0)) {
 		currentPosition = targetPosition;
 		lastMoved = millis();
 		s.write((int)currentPosition);
-		//Serial.print("A"); Serial.print(index); Serial.print(":"); Serial.println("done");
+		Serial.print("A"); Serial.print(index); Serial.print(":"); Serial.println("done");
 		moving = false;
 	}
-	if (targetPosition != currentPosition) 
-    {
+	if (targetPosition != currentPosition) {
 		currentPosition += (float)elapsedMS * rate;
 		lastMoved = millis();
 		s.write((int)currentPosition);
 		//Serial.print(pinNumber); Serial.print(":"); Serial.println(currentPosition);
 	}
 };
-
-bool ServoActuator::setValue(char code, long value) 
-{
+bool ServoActuator::setValue(char code, long value) {
 	bool handled = Actuator::setValue(code, value);
 	switch (code)
 	{
 	case 'e':
 		enabled = value;
-		if (!value) 
-        {
+		if (!value) {
 			if (s.attached())
 				s.detach();
 		}
-		else 
-        {
-			if (!s.attached()) 
-            {
+		else {
+			if (!s.attached()) {
 				s.attach(pinNumber);
 			}
 		}
@@ -142,12 +131,10 @@ bool ServoActuator::setValue(char code, long value)
 		break;
 	case 'T': //the Target position
 		targetPosition = value;
-		if (targetTime > 0) 
-        {
+		if (targetTime > 0) {
 			rate = (float)(targetPosition - currentPosition) / (float)targetTime;
 		}
-		else 
-        {
+		else {
 			s.write(targetPosition);
 			currentPosition = targetPosition;
 			//Serial.print("init servo:"); Serial.println(targetPosition);
@@ -176,38 +163,28 @@ Special Stuff for Motors
 * Note that defining the same motor as p035554 will make it run in the opposite direction
 */
 
-void MotorActuator::enableMotor(bool enable) 
-{
-	if (Pin1() == 0) 
-    {
-        //there is only a single pin number, this must be a sabertooth controller
-		if (!enable) 
-        {
-			if (s.attached()) 
-            {
+void MotorActuator::enableMotor(bool enable) {
+	if (Pin1() == 0) {//there is only a single pin number, this must be a sabertooth controller
+		if (!enable) {
+			if (s.attached()) {
 				s.detach();
 			}
 			//Serial.print(" disablingMotor: "), Serial.println(index);
 		}
-		else 
-        {
-			if (!s.attached()) 
-            {
+		else {
+			if (!s.attached()) {
 				s.attach(pinNumber, 1000, 2100);
 				//Serial.print(" Attaching Motor: "), Serial.println(index);
 			}
 		}
 	}
-	else 
-    {
-		if (enable && !enabled) 
-        {
+	else {
+		if (enable && !enabled) {
 			pinMode(Pin0(), OUTPUT);
 			pinMode(Pin1(), OUTPUT);
 			pinMode(Pin2(), OUTPUT);
 		}
-		else if (!enable && enabled) 
-        {
+		else if (!enable && enabled) {
 			analogWrite(Pin2(), 0);
 			pinMode(Pin2(), INPUT);
 			digitalWrite(Pin1(), LOW);
@@ -217,17 +194,13 @@ void MotorActuator::enableMotor(bool enable)
 		}
 	}
 }
-
 void MotorActuator::setMotorSpeed(int speed)
 {
 //	Serial.print("Index: "); Serial.print(index); Serial.print(" PinNumber:"); Serial.print(pinNumber); Serial.print(" Pin0:"); Serial.print(Pin0()); Serial.print(" Pin1:"); Serial.print(Pin1()); Serial.print(" Pin2:"); Serial.println(Pin2());
-	if (Pin1() == 0) 
-    {
-        //there is only a single pin number, this must be a sabertooth controller
+	if (Pin1() == 0) {//there is only a single pin number, this must be a sabertooth controller
 		s.write(speed);
 	}
-	else 
-    {
+	else {
 		//figure out the direction so we can disable/enable the correct pins
 		int dir = 0; //disable=0, fwd=1 rev=-1
 		if (speed > 95) dir = 1;
@@ -238,7 +211,6 @@ void MotorActuator::setMotorSpeed(int speed)
 		absSpeed *= 255;
 		absSpeed /= 90;
 		analogWrite(Pin2(), absSpeed);
-        
 		//Serial.print(" Setting Motor Speed: "), Serial.print(speed);
 		//Serial.print(" Abs Speed: "), Serial.print(absSpeed);
 		//Serial.print(" dir: "), Serial.println(dir);
@@ -249,8 +221,8 @@ void MotorActuator::setMotorSpeed(int speed)
 			digitalWrite(Pin1(), LOW);
 		}
 		else if (dir == 1) {
-			digitalWrite(Pin1(), LOW);  // LOW pin first to avoid a short...
 			digitalWrite(Pin0(), HIGH);
+			digitalWrite(Pin1(), LOW);
 		}
 		else if (dir == -1) {
 			digitalWrite(Pin0(), LOW);
@@ -259,15 +231,13 @@ void MotorActuator::setMotorSpeed(int speed)
 	}
 }
 
-void MotorActuator::updateActuatorValue(int elapsedMS) 
-{
+void MotorActuator::updateActuatorValue(int elapsedMS) {
 	lastMoved = millis();
-	switch (motorControlMode) 
-    {
-	case MotorActuator::raw: 
-        //nothing here, it's all handled in the SetValue() method
+	switch (motorControlMode) {
+	case MotorActuator::raw: //nothing here, it's all handled in the SetValue() method
 		//Serial.println("raw setSpeed called");
 		break;
+
 	case MotorActuator::rate:
 		//******************************************///
 		//PID controller implemented here
@@ -291,27 +261,26 @@ void MotorActuator::updateActuatorValue(int elapsedMS)
 		setMotorSpeed((int)newValue);
 		previousError = currentError;
 		break;
+
 	case MotorActuator::distance:
 		break;
 	}
 }
 
-bool MotorActuator::setValue(char code, long value) 
-{
-	Serial.print("motor SetValue:"); Serial.print(code);
-	Serial.print(":"); Serial.println(value);
+
+bool MotorActuator::setValue(char code, long value) {
+	//Serial.print("motor SetValue:"); Serial.print(code);
+	//Serial.print(":"); Serial.println(value);
 	bool handled = Actuator::setValue(code, value);
 	switch (code)
 	{
 	case 'T': //the Target value
 		targetPosition = value - 90;
 		//if you're in raw mode, everything happens right here...update does nothing
-		if (motorControlMode == raw) 
-        {
+		if (motorControlMode == raw) {
 			setMotorSpeed(value);
 		}
-		else if (value == 90) 
-        {
+		else if (value == 90) {
 			setMotorSpeed(90);
 			integrationSum = 0;
 			previousError = 0;

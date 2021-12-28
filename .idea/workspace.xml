@@ -2,17 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5441e647-f98d-4f69-a10c-cfb44fa35d20" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/ArduinoSerialEcho/ArduinoSerialEcho.ino" beforeDir="false" afterPath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/ArduinoSerialEcho/ArduinoSerialEcho.ino" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandleActuators.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandleActuators.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandleActuators.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandleActuators.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandlePackets.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandlePackets.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandlePackets.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandlePackets.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandleSensors.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandleSensors.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandleSensors.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/HandleSensors.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/Robot.ino" beforeDir="false" afterPath="$PROJECT_DIR$/src/ComboBoard/Arduino MEGA 2560/Robot/Robot.ino" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ComboBoard/ESP8266/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ComboBoard/ESP8266/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PC_Send_TCP_IP/connect.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/PC_Send_TCP_IP/connect.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

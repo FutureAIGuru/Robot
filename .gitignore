@@ -9,3 +9,4 @@ copy2localwebserver.cmd
 /src/ComboBoard/Arduino MEGA 2560/Robot/.vs/Robot/v16
 /src/ComboBoard/Arduino MEGA 2560/Robot/__vm
 /src/ComboBoard/Arduino MEGA 2560/Robot/Robot.vcxproj.user
+*.txt
